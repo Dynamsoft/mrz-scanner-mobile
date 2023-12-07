@@ -1,0 +1,48 @@
+{
+   "CharacterModelArray": [{
+      "DirectoryPath": "",
+      "Name": "MRZ"
+   }],
+   "LabelRecognizerParameterArray": [{
+      "Name": "default",
+      "ReferenceRegionNameArray": ["defaultReferenceRegion"],
+      "CharacterModelName": "MRZ",
+      "LineStringLengthRange": [30, 36],
+      "LineStringRegExPattern": "([ACI][A-Z<][A-Z<]{3}[A-Z0-9<]{9}[0-9][A-Z0-9<]{15}){(30)}|([0-9]{2}[(01-12)][(01-31)][0-9][MF<][0-9]{2}[(01-12)][(01-31)][0-9][A-Z<]{3}[A-Z0-9<]{11}[0-9]){(30)}|([A-Z<]{30}){(30)}|([ACI][A-Z<][A-Z<]{3}[A-Z<]{31}){(36)}|([A-Z0-9<]{9}[0-9][A-Z<]{3}[0-9]{2}[(01-12)][(01-31)][0-9][MF<][0-9]{2}[(01-12)][(01-31)][0-9][A-Z0-9<]{8}){(36)}",
+      "LetterHeightRange": [5, 1000, 1],
+      "MaxLineCharacterSpacing": 130,
+      "TextureDetectionModes": [{
+         "LibraryFileName": "",
+         "LibraryParameters": "",
+         "Mode": "TDM_GENERAL_WIDTH_CONCENTRATION",
+         "Sensitivity": 8
+      }],
+      "Timeout": 10000
+   }],
+   "LineSpecificationArray": [{
+      "BinarizationModes": [{
+         "BlockSizeX": 30,
+         "BlockSizeY": 30,
+         "Mode": "BM_LOCAL_BLOCK",
+         "MorphOperation": "Close"
+      }],
+      "LineNumber": "",
+      "Name": "defaultTextArea->L0"
+   }],
+   "ReferenceRegionArray": [{
+      "Localization": {
+         "FirstPoint": [0, 0],
+         "SecondPoint": [100, 0],
+         "ThirdPoint": [100, 100],
+         "FourthPoint": [0, 100],
+         "MeasuredByPercentage": 1,
+         "SourceType": "LST_MANUAL_SPECIFICATION"
+      },
+      "Name": "defaultReferenceRegion",
+      "TextAreaNameArray": ["defaultTextArea"]
+   }],
+   "TextAreaArray": [{
+      "Name": "defaultTextArea",
+      "LineSpecificationNameArray": ["defaultTextArea->L0"]
+   }]
+}
