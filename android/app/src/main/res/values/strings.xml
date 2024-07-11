@@ -1,0 +1,7 @@
+<resources>
+	<string name="app_name">PassportMRZScanner</string>
+	<string name="passport_scanner">Passport MRZ Scanner</string>
+	<string name="description">Dynamsoft Passport MRZ Scanner\n recognizes the Machine-Readable Zone (MRZ) on the biographical page of a passport and converts the encoded strings into human-readable fields.</string>
+	<string name="powered_by_dynamsoft">Powered by Dynamsoft</string>
+	<string name="scan_a_passport">Scan a Passport</string>
+</resources>

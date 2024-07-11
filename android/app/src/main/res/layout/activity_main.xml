@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/dy_black_34"
+	android:orientation="vertical"
+	android:gravity="center_horizontal"
+	tools:context=".MainActivity">
+
+	<ImageView
+		android:id="@+id/iv_logo"
+		android:layout_width="150dp"
+		android:layout_height="37dp"
+		android:layout_marginTop="130dp"
+		android:background="@drawable/dynamsoft_logo" />
+
+	<TextView
+		android:layout_marginTop="35dp"
+		android:id="@+id/tv_result"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/white"
+		android:textSize="28sp"
+		android:text="@string/passport_scanner"/>
+
+	<TextView
+		android:layout_marginHorizontal="42dp"
+		android:layout_marginTop="16dp"
+		android:textSize="16sp"
+		android:gravity="center"
+		android:textColor="@color/white"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:lineSpacingExtra="5dp"
+		android:text="@string/description"/>
+	
+	<android.widget.Button
+		android:id="@+id/btn_to"
+		android:layout_marginTop="30dp"
+		android:layout_width="180dp"
+		android:layout_height="45dp"
+		android:background="@color/dy_orange"
+		android:textColor="@color/white"
+		android:textAllCaps="false"
+		android:textSize="16sp"
+		android:text="@string/scan_a_passport"/>
+
+	<TextView
+		android:layout_weight="1"
+		android:gravity="bottom"
+		android:layout_width="wrap_content"
+		android:layout_height="0dp"
+		android:layout_marginBottom="35dp"
+		android:textSize="16sp"
+		android:textColor="@color/dy_dark_grey"
+		android:text="@string/powered_by_dynamsoft"/>
+</LinearLayout>
