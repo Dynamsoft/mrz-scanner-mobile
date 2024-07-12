@@ -30,7 +30,7 @@ def loadLocalProperties() {
 
 
 if(loadLocalProperties() == true) {
-    def local_script_file = rootProject.file('../../mobile_sample_script/local_dependencies.gradle')
+    def local_script_file = rootProject.file('../../../mobile_sample_script/local_dependencies.gradle')
     if(local_script_file.exists()) {
         apply from: local_script_file
     }
