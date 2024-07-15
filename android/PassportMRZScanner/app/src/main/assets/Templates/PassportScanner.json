@@ -16,6 +16,7 @@
       "TextLineSpecificationNameArray": [
         "TLS_Passport"
       ],
+      "ConfusableCharactersPath":"ConfusableChars.data",
       "SectionImageParameterArray": [
         {
           "Section": "ST_REGION_PREDETECTION",
@@ -37,6 +38,10 @@
       "Name": "TLS_Template",
       "CharacterModelName": "MRZ",
       "CharHeightRange": [ 5, 1000, 1 ],
+      "ConfusableCharactersCorrection":{
+        "ConfusableCharacters":[["0","O"],["1","I"],["5","S"]],
+        "FontNameArray":["OCR_B"]
+      },
       "BinarizationModes": [
         {
           "BlockSizeX": 30,

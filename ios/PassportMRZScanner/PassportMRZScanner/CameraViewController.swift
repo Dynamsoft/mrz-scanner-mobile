@@ -112,7 +112,7 @@ extension CameraViewController {
         cvr = CaptureVisionRouter()
         cvr.addResultReceiver(self)
         
-        let mrzTemplatePath = "PassportMRZScanner.json"
+        let mrzTemplatePath = "PassportScanner.json"
         try? cvr.initSettingsFromFile(mrzTemplatePath)
         
         // CVR link DCE.
