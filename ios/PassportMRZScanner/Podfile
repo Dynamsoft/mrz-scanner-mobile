@@ -6,8 +6,8 @@ target 'PassportMRZScanner' do
   use_frameworks!
 
   # Pods for PassportMRZScanner
-  pod 'DynamsoftLabelRecognizerBundle','3.2.3000'
-  pod 'DynamsoftCodeParser','2.2.10'
-  pod 'DynamsoftCodeParserDedicator','1.2.20'
+  pod 'DynamsoftLabelRecognizerBundle','3.2.3001'
+  pod 'DynamsoftCodeParser','2.2.11'
+  pod 'DynamsoftCodeParserDedicator','1.2.21'
 
 end
