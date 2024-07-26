@@ -48,7 +48,7 @@ Available language:
 ## License
 
 - If you want to use an offline license, please contact [Dynamsoft Support](https://www.dynamsoft.com/company/contact/)
-- You can also request a 30-day trial license via the [Request a Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=cvs&utm_source=github&package=mobile) link.
+- You can also request a 30-day trial license via the [Request a Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=passport&utm_source=github&package=mobile) link.
 
 ## Contact Us
 
