@@ -104,7 +104,7 @@ public class ScanActivity extends AppCompatActivity {
 				}
 			}
 		});
-		mBeepStatusView.setOnClickListener((v)->{
+		mBeepStatusView.setOnClickListener((v) -> {
 			mBeepStatus = !mBeepStatus;
 			updateBackground(mBeepStatus);
 			saveBeepStatus();
@@ -112,17 +112,16 @@ public class ScanActivity extends AppCompatActivity {
 	}
 
 
-
 	private void saveBeepStatus() {
 		SharedPreferences sp = getSharedPreferences("beep", Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor=sp.edit();
+		SharedPreferences.Editor editor = sp.edit();
 		editor.putBoolean("status", mBeepStatus);
 		editor.apply();
 	}
 
-	private boolean loadBeepStatus(){
+	private boolean loadBeepStatus() {
 		SharedPreferences sp = getSharedPreferences("beep", Context.MODE_PRIVATE);
-		return  sp.getBoolean("status", true);
+		return sp.getBoolean("status", true);
 	}
 
 	private void toggleBeepButton() {
@@ -130,11 +129,11 @@ public class ScanActivity extends AppCompatActivity {
 		updateBackground(mBeepStatus);
 	}
 
-	private void updateBackground(boolean status){
-		if(status){
+	private void updateBackground(boolean status) {
+		if (status) {
 			mBeepStatusView.setBackground(ResourcesCompat.getDrawable(getResources(),
 					R.drawable.icon_music, null));
-		}else{
+		} else {
 			mBeepStatusView.setBackground(ResourcesCompat.getDrawable(getResources(),
 					R.drawable.icon_music_mute, null));
 		}
@@ -208,7 +207,7 @@ public class ScanActivity extends AppCompatActivity {
 		} else {
 			HashMap<String, String> labelMap = assembleMap(result.getItems()[0]);
 			if (labelMap != null && !labelMap.isEmpty()) {
-				if(mBeepStatus){
+				if (mBeepStatus) {
 					Feedback.beep(this);
 				}
 				succeed = true;
@@ -279,7 +278,7 @@ public class ScanActivity extends AppCompatActivity {
 	private int calculateAge(int year, int month, int day) {
 		Calendar calendar = Calendar.getInstance();
 		int cYear = calendar.get(Calendar.YEAR);
-		int cMonth = calendar.get(Calendar.MONTH);
+		int cMonth = calendar.get(Calendar.MONTH) + 1;
 		int cDay = calendar.get(Calendar.DAY_OF_MONTH);
 		mBirthYear = 1900 + year;
 		int diffYear = cYear - mBirthYear;
