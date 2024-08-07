@@ -1,9 +1,8 @@
 
 import UIKit
-import DynamsoftLicense
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, LicenseVerificationListener {
+class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
@@ -19,19 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, LicenseVerificationListen
             UINavigationBar.appearance().standardAppearance = appearance
             UINavigationBar.appearance().scrollEdgeAppearance = appearance
         }
-        
-        LicenseManager.initLicense("DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9", verificationDelegate:self)
-        
         return true
-    }
-
-    func onLicenseVerified(_ isSuccess: Bool, error: Error?) {
-        if(error != nil)
-        {
-            if let msg = error?.localizedDescription {
-                print("Server license verify failed, error:\(msg)")
-            }
-        }
     }
 
 }

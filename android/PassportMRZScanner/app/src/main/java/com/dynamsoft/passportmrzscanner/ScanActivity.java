@@ -60,11 +60,17 @@ public class ScanActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_scan);
 		PermissionUtil.requestCameraPermission(this);
-
+        // Initialize the license.
+        // The license string here is a trial license. Note that network connection is required for this license to work.
+        // You can request an extension via the following link: https://www.dynamsoft.com/customer/license/trialLicense?product=passport&utm_source=samples&package=android
 		LicenseManager.initLicense("DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9",
 				this,
 				(isSuccess, error) -> {
 					if (!isSuccess) {
+						runOnUiThread(() -> {
+							((TextView)findViewById(R.id.tv_message))
+									.setText("License initialization failed: "+error.getMessage());
+						});
 						error.printStackTrace();
 					}
 				});
