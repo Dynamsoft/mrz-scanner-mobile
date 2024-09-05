@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="54dp"
+	android:background="@drawable/tab_selector_bg"
+	android:gravity="center_vertical"
+	android:orientation="horizontal">
+
+	<TextView
+		android:id="@+id/tv_id"
+		android:gravity="center"
+		android:layout_width="0dp"
+		android:layout_height="44dp"
+		android:layout_marginStart="5dp"
+		android:layout_marginEnd="10dp"
+		android:background="@drawable/tab_selector_item"
+		android:layout_weight="1"
+		android:textColor="@drawable/tab_selector_text_color"
+		android:textSize="16sp"
+		android:text="ID" />
+
+	<View
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:layout_marginVertical="19dp"
+		android:background="@color/dy_grey_70" />
+
+	<TextView
+		android:id="@+id/tv_passport"
+		android:gravity="center"
+		android:layout_width="0dp"
+		android:layout_height="44dp"
+		android:layout_marginStart="10dp"
+		android:layout_marginEnd="10dp"
+		android:background="@drawable/tab_selector_item"
+		android:layout_weight="1"
+		android:textColor="@drawable/tab_selector_text_color"
+		android:textSize="16sp"
+		android:text="Passport" />
+
+	<View
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:layout_marginVertical="19dp"
+		android:background="@color/dy_grey_70" />
+
+	<TextView
+		android:id="@+id/tv_both"
+		android:gravity="center"
+		android:layout_width="0dp"
+		android:layout_height="44dp"
+		android:layout_marginStart="10dp"
+		android:layout_marginEnd="5dp"
+		android:background="@drawable/tab_selector_item"
+		android:layout_weight="1"
+		android:textColor="@drawable/tab_selector_text_color"
+		android:textSize="16sp"
+		android:text="Both" />
+
+</LinearLayout>

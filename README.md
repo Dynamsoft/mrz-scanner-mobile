@@ -1,10 +1,10 @@
-# Passport MRZ Scanner Sample for Mobile Editions
+# MRZ Scanner Sample for Mobile Editions
 
-This repository contains a sample that demonstrates how to use the [Dynamsoft Capture Vision](https://www.dynamsoft.com/capture-vision/docs/core/introduction/) Mobile SDKs to scan and extract information from passports.
+This repository contains a sample that demonstrates how to use the [Dynamsoft Capture Vision](https://www.dynamsoft.com/capture-vision/docs/core/introduction/) Mobile SDKs to scan and extract information from passports and ID cards.
 
 - User Guide
-  - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/passport.html)
-  - [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/user-guide/passport.html)
+  - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/mrz.html)
+  - [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/user-guide/mrz.html)
 
 - API Reference
   - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/api-reference/)
@@ -26,9 +26,9 @@ This repository contains a sample that demonstrates how to use the [Dynamsoft Ca
 
 ## Samples
 
-### PassportMRZScanner
+### MRZScanner
 
-Scan the MRZ area of a passport and extract the holder's information.
+Scan the MRZ area of a passport or an ID card and extract the holder's information.
 
 Available language:
 
@@ -47,8 +47,8 @@ Available language:
 
 ## License
 
-You can request a 30-day trial license via the [Request a Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=passport&utm_source=samples&package=mobile) link.
+You can request a 30-day trial license via the [Request a Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=mrz&utm_source=samples&package=mobile) link.
 
 ## Contact Us
 
-For any questions or feedback, you can either [contact us](https://www.dynamsoft.com/company/contact/) or [submit an issue](https://github.com/Dynamsoft/passport-mrz-scanner-mobile/issues/new).
+For any questions or feedback, you can either [contact us](https://www.dynamsoft.com/company/contact/) or [submit an issue](https://github.com/Dynamsoft/mrz-scanner-mobile/issues/new).
