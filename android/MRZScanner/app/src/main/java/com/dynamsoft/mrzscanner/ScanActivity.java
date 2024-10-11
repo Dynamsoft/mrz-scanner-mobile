@@ -105,13 +105,6 @@ public class ScanActivity extends AppCompatActivity {
 		mRouter.addResultFilter(filter);
 
 		try {
-			// Initialize settings from the template file.
-			// The template file include 3 templates which are:
-			// "ReadPassportAndId": Process both passport and ID.
-			// "ReadId": Process ID only.
-			// "ReadPassport": Process passport only.
-			// You can specify different template names when triggering method startCapturing() to implement different processing tasks.
-			mRouter.initSettingsFromFile("MRZScanner.json");
 			// Set the input.
 			mRouter.setInput(mCamera);
 		} catch (CaptureVisionRouterException e) {
@@ -338,9 +331,9 @@ public class ScanActivity extends AppCompatActivity {
 
 		String number = entry.get("passportNumber") == null ? entry.get("documentNumber") == null
 				? "" : entry.get("documentNumber") : entry.get("passportNumber");
-		String mFirstName = entry.get("secondaryIdentifier") == null ? "" : " " + entry.get("secondaryIdentifier");
-		String mLastName = entry.get("primaryIdentifier") == null ? "" :  entry.get("primaryIdentifier");
-		String mName = mLastName + mFirstName;
+		String mFirstName = entry.get("secondaryIdentifier") == null ? "" : entry.get("secondaryIdentifier");
+		String mLastName = entry.get("primaryIdentifier") == null ? "" : " " + entry.get("primaryIdentifier");
+		String mName = mFirstName + mLastName;
 		if (number == null ||
 				entry.get("sex") == null ||
 				entry.get("issuingState") == null ||

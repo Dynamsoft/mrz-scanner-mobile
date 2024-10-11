@@ -29,7 +29,8 @@ android {
 }
 
 dependencies {
-    implementation "com.dynamsoft:dynamsoftcapturevisionbundle:2.2.3000"
+    implementation "com.dynamsoft:dynamsoftcapturevisionbundle:2.4.2000"
+    implementation 'com.dynamsoft:dynamsoftmrz:3.4.20'
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'

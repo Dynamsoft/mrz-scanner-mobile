@@ -135,15 +135,6 @@ extension CameraViewController {
     private func configureCVR() -> Void {
         cvr = CaptureVisionRouter()
         cvr.addResultReceiver(self)
-
-        // Initialize settings from the template file.
-        // The template file include 3 templates which are:
-        // "ReadPassportAndId": Process both passport and ID.
-        // "ReadId": Process ID only.
-        // "ReadPassport": Process passport only.
-        // You can specify different template names when triggering method startCapturing() to implement different processing tasks.               
-        let mrzTemplatePath = "MRZScanner.json"
-        try? cvr.initSettingsFromFile(mrzTemplatePath)
         
         // Set the input.
         try? cvr.setInput(dce)

@@ -1,6 +1,6 @@
 # MRZ Scanner Sample for Mobile Editions
 
-This repository contains a sample that demonstrates how to use the [Dynamsoft Capture Vision](https://www.dynamsoft.com/capture-vision/docs/core/introduction/) Mobile SDKs to scan and extract information from passports and ID cards.
+This repository contains a sample that demonstrates how to use the Dynamsoft Capture Vision Mobile SDKs to scan and extract information from passports and ID cards.
 
 - User Guide
   - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/mrz.html)
@@ -24,6 +24,11 @@ This repository contains a sample that demonstrates how to use the [Dynamsoft Ca
 - Supported ABI: **arm64** and **x86_64**.
 - Development Environment: Xcode 13 and above (Xcode 14.1+ recommended), CocoaPods 1.11.0+.
 
+## Add the SDK
+
+- [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/mrz.html#add-the-sdk)
+- [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/user-guide/mrz.html#add-the-sdk)
+
 ## Samples
 
 ### MRZScanner
@@ -34,16 +39,6 @@ Available language:
 
 - Java (Android)
 - Swift (iOS)
-
-### How to build (For iOS Editions)
-
-1. Enter the sample folder, install Dynamsoft Capture Vision SDKs through `pod` command
-
-    ```bash
-    pod install
-    ```
-
-2. Open the generated file `[SampleName].xcworkspace`
 
 ## License
 
