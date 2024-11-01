@@ -22,6 +22,20 @@ class MRZResultModel {
     func determineWhetherIsLegal() -> Bool {
         guard let parsedFields = parsedResultItem?.parsedFields else { return false }
         guard let documentType = parsedResultItem?.codeType else { return false }
+        
+        if documentType == "MRTD_TD1_ID" {
+            if parsedResultItem?.getFieldValidationStatus("line1") == .failed ||
+                parsedResultItem?.getFieldValidationStatus("line2") == .failed ||
+                parsedResultItem?.getFieldValidationStatus("line3") == .failed {
+                return false
+            }
+        } else {
+            if parsedResultItem?.getFieldValidationStatus("line1") == .failed ||
+                parsedResultItem?.getFieldValidationStatus("line2") == .failed {
+                return false
+            }
+        }
+        
         var isLegal = true
         if parsedFields["birthDay"] == nil ||
             parsedFields["birthMonth"] == nil ||

@@ -24,6 +24,7 @@ import com.dynamsoft.dce.DrawingLayer;
 import com.dynamsoft.dce.EnumEnhancerFeatures;
 import com.dynamsoft.dce.Feedback;
 import com.dynamsoft.dce.utils.PermissionUtil;
+import com.dynamsoft.dcp.EnumValidationStatus;
 import com.dynamsoft.dcp.ParsedResult;
 import com.dynamsoft.dcp.ParsedResultItem;
 import com.dynamsoft.dlr.RecognizedTextLinesResult;
@@ -343,6 +344,19 @@ public class ScanActivity extends AppCompatActivity {
 				entry.get("dateOfBirth") == null ||
 				entry.get("dateOfExpiry") == null) {
 			return null;
+		}
+
+		if (item.getCodeType().equals("MRTD_TD1_ID")) {
+			if (item.getFieldValidationStatus("line1") == EnumValidationStatus.VS_FAILED
+					|| item.getFieldValidationStatus("line2") == EnumValidationStatus.VS_FAILED
+					|| item.getFieldValidationStatus("line3") == EnumValidationStatus.VS_FAILED) {
+				return null;
+			}
+		} else {
+			if (item.getFieldValidationStatus("line1") == EnumValidationStatus.VS_FAILED
+					|| item.getFieldValidationStatus("line2") == EnumValidationStatus.VS_FAILED) {
+				return null;
+			}
 		}
 
 		int age = -1;
