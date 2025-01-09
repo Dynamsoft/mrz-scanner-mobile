@@ -1,14 +1,14 @@
-# MRZ Scanner Sample for Mobile Editions
+# Dynamsoft MRZ Scanner for Android & iOS Editions
 
-This repository contains a sample that demonstrates how to use the Dynamsoft Capture Vision Mobile SDKs to scan and extract information from passports and ID cards.
+The repository provides you a solution on how to develop a native mobile MRZ scanning app. It includes the source of  `DynamsoftMRZScannerBundle` and a sample to demonstrate how to develop with the bundle.
 
 - User Guide
-  - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/mrz.html)
-  - [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/user-guide/mrz.html)
+  - [Android](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/android/user-guide/index.html)
+  - [iOS](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/ios/user-guide/index.html)
 
 - API Reference
-  - [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/api-reference/)
-  - [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/api-reference/)
+  - [Android](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/android/api-reference/)
+  - [iOS](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/ios/api-reference/)
 
 ## System Requirements
 
@@ -26,12 +26,14 @@ This repository contains a sample that demonstrates how to use the Dynamsoft Cap
 
 ## Add the SDK
 
-- [Android](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/android/user-guide/mrz.html#add-the-sdk)
-- [iOS](https://www.dynamsoft.com/capture-vision/docs/mobile/programming/ios/user-guide/mrz.html#add-the-sdk)
+`DynamsoftMRZScannerBundle` is a bundle package that contains all required dependencies when using Dynamsoft SDKs to develop an MRZ scanning app.
+
+- [Android](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/android/user-guide/index.html#add-the-sdk)
+- [iOS](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/ios/user-guide/index.html#add-the-sdk)
 
 ## Samples
 
-### MRZScanner
+### ScanMRZ
 
 Scan the MRZ area of a passport or an ID card and extract the holder's information.
 
@@ -43,6 +45,13 @@ Available language:
 ## License
 
 You can request a 30-day trial license via the [Request a Trial License](https://www.dynamsoft.com/customer/license/trialLicense?product=mrz&utm_source=samples&package=mobile) link.
+
+## Further Customization
+
+If you need further customization on the scanner component, you can refer to the open source code in this repository.
+
+- [Android](Android/src/README.md)
+- [iOS](ios/src/README.md)
 
 ## Contact Us
 

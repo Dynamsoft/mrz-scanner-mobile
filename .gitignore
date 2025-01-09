@@ -60,3 +60,4 @@ fastlane/screenshots
 *.xcworkspace
 Pods/
 Podfile.lock
+*.xcframework

@@ -1,0 +1,542 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		68CFBAF72D01824D00E125F8 /* XCFramework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 68CFBAF82D01824D00E125F8 /* Build configuration list for PBXAggregateTarget "XCFramework" */;
+			buildPhases = (
+				68CFBAFB2D01826500E125F8 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = XCFramework;
+			packageProductDependencies = (
+			);
+			productName = XCFramework;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		1DC845D92CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		681D598C2D1BD81500A22AAB /* DynamsoftUtility in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598B2D1BD81500A22AAB /* DynamsoftUtility */; };
+		681D598E2D1BD87000A22AAB /* DynamsoftImageProcessing in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598D2D1BD87000A22AAB /* DynamsoftImageProcessing */; };
+		681D59902D1BD87900A22AAB /* DynamsoftNeuralNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598F2D1BD87900A22AAB /* DynamsoftNeuralNetwork */; };
+		68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */; };
+		68AB7CF02D02D25D009D60B8 /* DynamsoftCameraEnhancer in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CEF2D02D25D009D60B8 /* DynamsoftCameraEnhancer */; };
+		68AB7CF22D02D25D009D60B8 /* DynamsoftCaptureVisionRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF12D02D25D009D60B8 /* DynamsoftCaptureVisionRouter */; };
+		68AB7CF42D02D25D009D60B8 /* DynamsoftCodeParser in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF32D02D25D009D60B8 /* DynamsoftCodeParser */; };
+		68AB7CF62D02D25D009D60B8 /* DynamsoftCodeParserDedicator in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF52D02D25D009D60B8 /* DynamsoftCodeParserDedicator */; };
+		68AB7CF82D02D25D009D60B8 /* DynamsoftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF72D02D25D009D60B8 /* DynamsoftCore */; };
+		68AB7CFC2D02D25D009D60B8 /* DynamsoftLabelRecognizer in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFB2D02D25D009D60B8 /* DynamsoftLabelRecognizer */; };
+		68AB7CFE2D02D25D009D60B8 /* DynamsoftLicense in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFD2D02D25D009D60B8 /* DynamsoftLicense */; };
+		68AB7D002D02D25D009D60B8 /* DynamsoftMRZ in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFF2D02D25D009D60B8 /* DynamsoftMRZ */; };
+		68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */; };
+		68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */; };
+		68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF52D01794200E125F8 /* MRZScanResult.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1DC845D52CEB04AE00998CCD /* DynamsoftMRZScannerBundle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamsoftMRZScannerBundle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamsoftMRZScannerBundle.h; sourceTree = "<group>"; };
+		68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
+		68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerConfig.swift; sourceTree = "<group>"; };
+		68CFBAF52D01794200E125F8 /* MRZScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScanResult.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1DC845D22CEB04AE00998CCD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				681D59902D1BD87900A22AAB /* DynamsoftNeuralNetwork in Frameworks */,
+				68AB7CFE2D02D25D009D60B8 /* DynamsoftLicense in Frameworks */,
+				68AB7CFC2D02D25D009D60B8 /* DynamsoftLabelRecognizer in Frameworks */,
+				68AB7CF62D02D25D009D60B8 /* DynamsoftCodeParserDedicator in Frameworks */,
+				681D598E2D1BD87000A22AAB /* DynamsoftImageProcessing in Frameworks */,
+				68AB7CF42D02D25D009D60B8 /* DynamsoftCodeParser in Frameworks */,
+				68AB7D002D02D25D009D60B8 /* DynamsoftMRZ in Frameworks */,
+				68AB7CF22D02D25D009D60B8 /* DynamsoftCaptureVisionRouter in Frameworks */,
+				68AB7CF02D02D25D009D60B8 /* DynamsoftCameraEnhancer in Frameworks */,
+				68AB7CF82D02D25D009D60B8 /* DynamsoftCore in Frameworks */,
+				681D598C2D1BD81500A22AAB /* DynamsoftUtility in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1DC845CB2CEB04AE00998CCD = {
+			isa = PBXGroup;
+			children = (
+				1DC845D72CEB04AE00998CCD /* DynamsoftMRZScannerBundle */,
+				681D598A2D1BD81500A22AAB /* Frameworks */,
+				1DC845D62CEB04AE00998CCD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1DC845D62CEB04AE00998CCD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1DC845D52CEB04AE00998CCD /* DynamsoftMRZScannerBundle.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1DC845D72CEB04AE00998CCD /* DynamsoftMRZScannerBundle */ = {
+			isa = PBXGroup;
+			children = (
+				1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */,
+				68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */,
+				68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */,
+				68CFBAF52D01794200E125F8 /* MRZScanResult.swift */,
+				68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */,
+			);
+			path = DynamsoftMRZScannerBundle;
+			sourceTree = "<group>";
+		};
+		681D598A2D1BD81500A22AAB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1DC845D02CEB04AE00998CCD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DC845D92CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1DC845D42CEB04AE00998CCD /* DynamsoftMRZScannerBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DC845DC2CEB04AE00998CCD /* Build configuration list for PBXNativeTarget "DynamsoftMRZScannerBundle" */;
+			buildPhases = (
+				1DC845D02CEB04AE00998CCD /* Headers */,
+				1DC845D12CEB04AE00998CCD /* Sources */,
+				1DC845D22CEB04AE00998CCD /* Frameworks */,
+				1DC845D32CEB04AE00998CCD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DynamsoftMRZScannerBundle;
+			productName = DynamsoftFramework;
+			productReference = 1DC845D52CEB04AE00998CCD /* DynamsoftMRZScannerBundle.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1DC845CC2CEB04AE00998CCD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					1DC845D42CEB04AE00998CCD = {
+						CreatedOnToolsVersion = 15.0;
+						LastSwiftMigration = 1610;
+					};
+					68CFBAF72D01824D00E125F8 = {
+						CreatedOnToolsVersion = 16.1;
+					};
+				};
+			};
+			buildConfigurationList = 1DC845CF2CEB04AE00998CCD /* Build configuration list for PBXProject "DynamsoftMRZScannerBundle" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1DC845CB2CEB04AE00998CCD;
+			packageReferences = (
+				68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */,
+			);
+			productRefGroup = 1DC845D62CEB04AE00998CCD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1DC845D42CEB04AE00998CCD /* DynamsoftMRZScannerBundle */,
+				68CFBAF72D01824D00E125F8 /* XCFramework */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1DC845D32CEB04AE00998CCD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		68CFBAFB2D01826500E125F8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# xcframework\nset -e\n# Sets\nreadonly target_name=${PROJECT_NAME}\nreadonly framework_name=${target_name}\nbuild_dir=\"build\"\nxcarchive_iOS=${build_dir}/${framework_name}_iOS.xcarchive\nxcarchive_iOSSimulator=${build_dir}/${framework_name}_iOSSimulator.xcarchive\n\ndSYM_iOS=${xcarchive_iOS}/dSYMs/${framework_name}.framework.dSYM\ndSYM_iOSSimulator=${xcarchive_iOSSimulator}/dSYMs/${framework_name}.framework.dSYM\n\n# Clean oldest\nfunction build_clean {\n    printf \"====build_clean====\"\n    if [ -d ${build_dir} ]\n    then\n        rm -rf ${build_dir}\n    fi\n}\n\n# Build frameworks\nfunction build_frameworks {\n    printf \"====build_frameworks====\"\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS\" -archivePath ${xcarchive_iOS} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS Simulator\" -archivePath ${xcarchive_iOSSimulator} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n}\n\n# Build xcframework\nfunction build_xcframework {\n    printf \"====build_xcframework====\"\n    xcodebuild -create-xcframework -archive ${xcarchive_iOS} -framework \"${framework_name}.framework\" -archive ${xcarchive_iOSSimulator} -framework \"${framework_name}.framework\" -output \"${build_dir}/${framework_name}.xcframework\"\n}\n\n# do\nbuild_clean\nbuild_frameworks\nbuild_xcframework\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1DC845D12CEB04AE00998CCD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */,
+				68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */,
+				68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DC845DA2CEB04AE00998CCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		1DC845DB2CEB04AE00998CCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		1DC845DD2CEB04AE00998CCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = W6PESGXW9M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftFramework;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1DC845DE2CEB04AE00998CCD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = W6PESGXW9M;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftFramework;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		68CFBAF92D01824D00E125F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W6PESGXW9M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		68CFBAFA2D01824D00E125F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = W6PESGXW9M;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DC845CF2CEB04AE00998CCD /* Build configuration list for PBXProject "DynamsoftMRZScannerBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DC845DA2CEB04AE00998CCD /* Debug */,
+				1DC845DB2CEB04AE00998CCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DC845DC2CEB04AE00998CCD /* Build configuration list for PBXNativeTarget "DynamsoftMRZScannerBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DC845DD2CEB04AE00998CCD /* Debug */,
+				1DC845DE2CEB04AE00998CCD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		68CFBAF82D01824D00E125F8 /* Build configuration list for PBXAggregateTarget "XCFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68CFBAF92D01824D00E125F8 /* Debug */,
+				68CFBAFA2D01824D00E125F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Dynamsoft/capture-vision-spm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.1000;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		681D598B2D1BD81500A22AAB /* DynamsoftUtility */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftUtility;
+		};
+		681D598D2D1BD87000A22AAB /* DynamsoftImageProcessing */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftImageProcessing;
+		};
+		681D598F2D1BD87900A22AAB /* DynamsoftNeuralNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftNeuralNetwork;
+		};
+		68AB7CEF2D02D25D009D60B8 /* DynamsoftCameraEnhancer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftCameraEnhancer;
+		};
+		68AB7CF12D02D25D009D60B8 /* DynamsoftCaptureVisionRouter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftCaptureVisionRouter;
+		};
+		68AB7CF32D02D25D009D60B8 /* DynamsoftCodeParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftCodeParser;
+		};
+		68AB7CF52D02D25D009D60B8 /* DynamsoftCodeParserDedicator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftCodeParserDedicator;
+		};
+		68AB7CF72D02D25D009D60B8 /* DynamsoftCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftCore;
+		};
+		68AB7CFB2D02D25D009D60B8 /* DynamsoftLabelRecognizer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftLabelRecognizer;
+		};
+		68AB7CFD2D02D25D009D60B8 /* DynamsoftLicense */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftLicense;
+		};
+		68AB7CFF2D02D25D009D60B8 /* DynamsoftMRZ */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
+			productName = DynamsoftMRZ;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 1DC845CC2CEB04AE00998CCD /* Project object */;
+}
