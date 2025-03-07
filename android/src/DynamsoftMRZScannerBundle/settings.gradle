@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "DynamsoftMRZScanner"
-include ':app'
+include ':dynamsoftmrzscannerbundle'

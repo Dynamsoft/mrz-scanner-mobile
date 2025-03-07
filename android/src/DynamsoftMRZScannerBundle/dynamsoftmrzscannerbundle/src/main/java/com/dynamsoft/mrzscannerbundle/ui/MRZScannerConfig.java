@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class MRZScannerConfig implements Serializable {
 	public static final String TAG = "MRZScannerConfig";
+	@Deprecated
 	private String templateFilePath;
 	private String license;
 	private boolean isTorchButtonVisible = true;
@@ -16,6 +17,8 @@ public class MRZScannerConfig implements Serializable {
 	private boolean isCloseButtonVisible = true;
 	private EnumDocumentType documentType;
 	private boolean guideFrameVisible = true;
+	private boolean isCameraToggleButtonVisible;
+	private String templateFile;
 
 	public boolean isCloseButtonVisible() {
 		return isCloseButtonVisible;
@@ -49,10 +52,12 @@ public class MRZScannerConfig implements Serializable {
 		this.license = license;
 	}
 
+	@Deprecated
 	public String getTemplateFilePath() {
 		return templateFilePath;
 	}
 
+	@Deprecated
 	public void setTemplateFilePath(String templateFilePath) {
 		this.templateFilePath = templateFilePath;
 	}
@@ -71,5 +76,21 @@ public class MRZScannerConfig implements Serializable {
 
 	public void setGuideFrameVisible(boolean guideFrameVisible) {
 		this.guideFrameVisible = guideFrameVisible;
+	}
+
+	public String getTemplateFile() {
+		return templateFile;
+	}
+
+	public void setTemplateFile(String templateFile) {
+		this.templateFile = templateFile;
+	}
+
+	public boolean isCameraToggleButtonVisible() {
+		return isCameraToggleButtonVisible;
+	}
+
+	public void setCameraToggleButtonVisible(boolean cameraToggleButtonVisible) {
+		isCameraToggleButtonVisible = cameraToggleButtonVisible;
 	}
 }

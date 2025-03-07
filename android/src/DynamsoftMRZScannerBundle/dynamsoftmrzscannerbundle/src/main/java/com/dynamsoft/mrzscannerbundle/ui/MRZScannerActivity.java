@@ -2,10 +2,9 @@ package com.dynamsoft.mrzscannerbundle.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -18,6 +17,7 @@ import com.dynamsoft.dce.CameraEnhancer;
 import com.dynamsoft.dce.CameraEnhancerException;
 import com.dynamsoft.dce.CameraView;
 import com.dynamsoft.dce.DrawingLayer;
+import com.dynamsoft.dce.EnumCameraPosition;
 import com.dynamsoft.dce.EnumEnhancerFeatures;
 import com.dynamsoft.dce.Feedback;
 import com.dynamsoft.dce.utils.PermissionUtil;
@@ -25,7 +25,6 @@ import com.dynamsoft.dcp.EnumValidationStatus;
 import com.dynamsoft.dcp.ParsedResult;
 import com.dynamsoft.dcp.ParsedResultItem;
 import com.dynamsoft.dlr.RecognizedTextLinesResult;
-import com.dynamsoft.dlr.TextLineResultItem;
 import com.dynamsoft.license.LicenseManager;
 import com.dynamsoft.mrzscannerbundle.R;
 import com.dynamsoft.utility.MultiFrameResultCrossFilter;
@@ -55,11 +54,15 @@ public class MRZScannerActivity extends AppCompatActivity {
 	public final static String EXTRA_NUMBER = "extra_number";
 	private CameraEnhancer mCamera;
 	private CameraView mCameraView;
+	private Button btnToggle;
+	private Button btnTorch;
 	private CaptureVisionRouter mRouter;
 	private boolean succeed = false;
 	private String mCurrentTemplate = "ReadPassportAndId";
 	private MRZScannerConfig configuration;
 	private String number;
+	private boolean isTorchOn;
+	private boolean useBackCamera = true;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,8 @@ public class MRZScannerActivity extends AppCompatActivity {
 				}
 			});
 		}
+		btnToggle = findViewById(R.id.btn_toggle);
+		btnTorch = findViewById(R.id.btn_torch);
 
 		boolean isCloseButtonVisible = configuration.isCloseButtonVisible();
 		ImageView closeButton = findViewById(R.id.iv_back);
@@ -113,7 +118,15 @@ public class MRZScannerActivity extends AppCompatActivity {
 	private void configCVR() {
 		mRouter = new CaptureVisionRouter(this);
 		try {
-			if (configuration.getTemplateFilePath() != null && !configuration.getTemplateFilePath().isEmpty()) {
+			if (configuration.getTemplateFile() != null && !configuration.getTemplateFile().isEmpty()) {
+				String template = configuration.getTemplateFile();
+				mCurrentTemplate = "";
+				if (template.startsWith("{") || template.startsWith("[")) {
+					mRouter.initSettings(template);
+				} else {
+					mRouter.initSettingsFromFile(template);
+				}
+			} else if (configuration.getTemplateFilePath() != null && !configuration.getTemplateFilePath().isEmpty()) {
 				mCurrentTemplate = "";
 				mRouter.initSettingsFromFile(configuration.getTemplateFilePath());
 			} else {
@@ -150,6 +163,7 @@ public class MRZScannerActivity extends AppCompatActivity {
 			@Override
 			public void onSuccess() {
 				initTorchButton();
+				initToggleButton();
 			}
 
 			// If failed, it shows an error message that describes the reasons.
@@ -164,16 +178,68 @@ public class MRZScannerActivity extends AppCompatActivity {
 		});
 	}
 
-	private void initTorchButton() {
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		float density = displayMetrics.density;
-		float screenWidth = displayMetrics.widthPixels / density;
-		float screenHeight = displayMetrics.heightPixels / density;
-		mCameraView.setTorchButtonVisible(configuration.isTorchButtonVisible());
-		if (configuration.isTorchButtonVisible()) {
-			mCameraView.setTorchButton(new Point((int) (screenWidth / 2 - 22), (int) (screenHeight * 0.8)));
+	private void turnOnTorch() {
+		try {
+			mCamera.turnOnTorch();
+			btnTorch.setBackground(ContextCompat.getDrawable(this, R.drawable.icon_flash_on));
+		} catch (CameraEnhancerException e) {
+			e.printStackTrace();
 		}
+	}
+
+	private void turnOffTorch() {
+		try {
+			mCamera.turnOffTorch();
+			btnTorch.setBackground(ContextCompat.getDrawable(this, R.drawable.icon_flash_off));
+		} catch (CameraEnhancerException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initTorchButton() {
+		btnTorch.setVisibility(configuration.isTorchButtonVisible() ? View.VISIBLE : View.GONE);
+		btnTorch.setOnClickListener(v -> {
+			isTorchOn = !isTorchOn;
+			if (isTorchOn) {
+				turnOnTorch();
+			} else {
+				turnOffTorch();
+			}
+		});
+	}
+
+	private void resetToggleButton(int margin) {
+		ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) btnToggle.getLayoutParams();
+		params.setMarginStart(margin);
+		btnToggle.setLayoutParams(params);
+	}
+
+	public int dpToPx(int dp) {
+		float density = getResources().getDisplayMetrics().density;
+		return Math.round(dp * density);
+	}
+
+	private void initToggleButton() {
+		btnToggle.setVisibility(configuration.isCameraToggleButtonVisible() ? View.VISIBLE : View.GONE);
+		if (!configuration.isTorchButtonVisible() && configuration.isCameraToggleButtonVisible()) {
+			resetToggleButton(0);
+		}
+		btnToggle.setOnClickListener(v -> {
+			try {
+				useBackCamera = !useBackCamera;
+				mCamera.selectCamera(useBackCamera ? EnumCameraPosition.CP_BACK : EnumCameraPosition.CP_FRONT);
+				if (configuration.isTorchButtonVisible()) {
+					btnTorch.setVisibility(useBackCamera ? View.VISIBLE : View.GONE);
+					resetToggleButton(useBackCamera ? dpToPx(50) : 0);
+					if (!useBackCamera) {
+						isTorchOn = false;
+						turnOffTorch();
+					}
+				}
+			} catch (CameraEnhancerException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Override

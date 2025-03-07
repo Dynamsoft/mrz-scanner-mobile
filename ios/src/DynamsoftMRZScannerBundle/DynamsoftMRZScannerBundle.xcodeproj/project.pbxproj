@@ -35,7 +35,6 @@
 		68AB7CF82D02D25D009D60B8 /* DynamsoftCore in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF72D02D25D009D60B8 /* DynamsoftCore */; };
 		68AB7CFC2D02D25D009D60B8 /* DynamsoftLabelRecognizer in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFB2D02D25D009D60B8 /* DynamsoftLabelRecognizer */; };
 		68AB7CFE2D02D25D009D60B8 /* DynamsoftLicense in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFD2D02D25D009D60B8 /* DynamsoftLicense */; };
-		68AB7D002D02D25D009D60B8 /* DynamsoftMRZ in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CFF2D02D25D009D60B8 /* DynamsoftMRZ */; };
 		68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */; };
 		68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */; };
 		68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF52D01794200E125F8 /* MRZScanResult.swift */; };
@@ -61,7 +60,6 @@
 				68AB7CF62D02D25D009D60B8 /* DynamsoftCodeParserDedicator in Frameworks */,
 				681D598E2D1BD87000A22AAB /* DynamsoftImageProcessing in Frameworks */,
 				68AB7CF42D02D25D009D60B8 /* DynamsoftCodeParser in Frameworks */,
-				68AB7D002D02D25D009D60B8 /* DynamsoftMRZ in Frameworks */,
 				68AB7CF22D02D25D009D60B8 /* DynamsoftCaptureVisionRouter in Frameworks */,
 				68AB7CF02D02D25D009D60B8 /* DynamsoftCameraEnhancer in Frameworks */,
 				68AB7CF82D02D25D009D60B8 /* DynamsoftCore in Frameworks */,
@@ -371,10 +369,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -405,10 +403,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftFramework;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -530,11 +528,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
 			productName = DynamsoftLicense;
-		};
-		68AB7CFF2D02D25D009D60B8 /* DynamsoftMRZ */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 68AB7CEE2D02D25D009D60B8 /* XCRemoteSwiftPackageReference "capture-vision-spm" */;
-			productName = DynamsoftMRZ;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -19,7 +19,6 @@ public class MRZScannerViewController: UIViewController {
     let dce = CameraEnhancer()
     let cameraView = CameraView()
     let cvr = CaptureVisionRouter()
-    let button = UIButton(type: .system)
     @objc public var config: MRZScannerConfig = .init()
     @objc public var onScannedResult: ((MRZScanResult) -> Void)?
     
@@ -42,7 +41,25 @@ public class MRZScannerViewController: UIViewController {
         case .passport:
             name = "ReadPassport"
         }
-        if let path = config.templateFilePath {
+        if let path = config.templateFile {
+            if path.hasPrefix("{") || path.hasPrefix("[") {
+                do {
+                    try cvr.initSettings(path)
+                    name = ""
+                } catch let error as NSError {
+                    self.onScannedResult?(.init(resultStatus: .exception, errorCode: error.code, errorString: error.localizedDescription))
+                    return
+                }
+            } else {
+                do {
+                    try cvr.initSettingsFromFile(path)
+                    name = ""
+                } catch let error as NSError {
+                    self.onScannedResult?(.init(resultStatus: .exception, errorCode: error.code, errorString: error.localizedDescription))
+                    return
+                }
+            }
+        } else if let path = config.templateFilePath {
             do {
                 try cvr.initSettingsFromFile(path)
                 name = ""
@@ -67,40 +84,54 @@ public class MRZScannerViewController: UIViewController {
         super.viewDidAppear(animated)
     }
     
-    public override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        let frame = view.bounds
-        let orientation = UIDevice.current.orientation
-        if orientation.isLandscape {
-            button.frame = CGRect(x: 50, y: 20, width: 50, height: 50)
-            cameraView.setTorchButton(frame: CGRect(x: frame.width / 2 - 25, y: frame.height - 100, width: 50, height: 50), torchOnImage: nil, torchOffImage: nil)
-        } else if orientation.isPortrait {
-            button.frame = CGRect(x: 20, y: 50, width: 50, height: 50)
-            cameraView.setTorchButton(frame: CGRect(x: frame.width / 2 - 25, y: frame.height - 150, width: 50, height: 50), torchOnImage: nil, torchOffImage: nil)
-        }
-    }
-}
-
-extension MRZScannerViewController: LicenseVerificationListener {
+    lazy var closeButton: UIButton = {
+        let bundle = Bundle(for: type(of: self))
+        let button = UIButton()
+        let closeImage = UIImage(named: "close", in: bundle, compatibleWith: nil)
+        button.setImage(closeImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(onCloseButtonTouchUp), for: .touchUpInside)
+        return button
+    }()
     
-    private func setupLicense() {
-        if let license = config.license {
-            LicenseManager.initLicense(license, verificationDelegate: self)
-        }
-    }
+    lazy var torchButton: UIButton = {
+        let bundle = Bundle(for: type(of: self))
+        let button = UIButton()
+        let torchOffImage = UIImage(named: "torchOff", in: bundle, compatibleWith: nil)
+        let torchOnImage = UIImage(named: "torchOn", in: bundle, compatibleWith: nil)
+        button.setImage(torchOffImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(torchOnImage?.withRenderingMode(.alwaysOriginal), for: .selected)
+        button.addTarget(self, action: #selector(onTorchButtonTouchUp), for: .touchUpInside)
+        return button
+    }()
     
-    public func onLicenseVerified(_ isSuccess: Bool, error: (any Error)?) {
-        
-    }
+    lazy var cameraButton: UIButton = {
+        let bundle = Bundle(for: type(of: self))
+        let button = UIButton()
+        let switchCameraImage = UIImage(named: "switchCamera", in: bundle, compatibleWith: nil)
+        button.setImage(switchCameraImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(onCameraButtonTouchUp), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var imageView: UIImageView = {
+        let bundle = Bundle(for: type(of: self))
+        let imageView = UIImageView(image: UIImage(named: "guide", in: bundle, compatibleWith: nil))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
 }
 
 extension MRZScannerViewController {
     private func setupDCV() {
-        cameraView.frame = view.bounds
-        cameraView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        cameraView.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(cameraView, at: 0)
+        NSLayoutConstraint.activate([
+            cameraView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            cameraView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            cameraView.topAnchor.constraint(equalTo: view.topAnchor),
+            cameraView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
         dce.cameraView = cameraView
-        dce.enableEnhancedFeatures(.frameFilter)
         try! cvr.setInput(dce)
         cvr.addResultReceiver(self)
         let filter = MultiFrameResultCrossFilter()
@@ -109,29 +140,38 @@ extension MRZScannerViewController {
     }
     
     private func setupUI() {
-        let frame = view.bounds
-        cameraView.setTorchButton(frame: CGRect(x: frame.width / 2 - 25, y: frame.height - 150, width: 50, height: 50), torchOnImage: nil, torchOffImage: nil)
-        cameraView.torchButtonVisible = config.isTorchButtonVisible
+        closeButton.isHidden = !config.isCloseButtonVisible
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(closeButton)
         
-        let bundle = Bundle(for: type(of: self))
-        let close = UIImage(named: "close", in: bundle, compatibleWith: nil)
-        button.setImage(close?.withRenderingMode(.alwaysOriginal), for: .normal)
-        button.frame = CGRect(x: 20, y: 50, width: 50, height: 50)
-        button.addTarget(self, action: #selector(buttonClicked), for: .touchUpInside)
-        button.isHidden = !config.isCloseButtonVisible
-        view.addSubview(button)
+        torchButton.isHidden = !config.isTorchButtonVisible
+        torchButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        cameraButton.isHidden = !config.isCameraToggleButtonVisible
+        cameraButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        let stackView = UIStackView(arrangedSubviews: [torchButton, cameraButton])
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
+
+        imageView.isHidden = !config.isGuideFrameVisible
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
         
         let safeArea = view.safeAreaLayoutGuide
-        let imageView = UIImageView(image: UIImage(named: "guide", in: bundle, compatibleWith: nil))
-        imageView.contentMode = .scaleAspectFit
-        imageView.isHidden = !config.isGuideFrameVisible
-        view.addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             imageView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
             imageView.widthAnchor.constraint(lessThanOrEqualTo: safeArea.widthAnchor, multiplier: 0.9),
-            imageView.heightAnchor.constraint(lessThanOrEqualTo: safeArea.heightAnchor, multiplier: 0.9)
+            imageView.heightAnchor.constraint(lessThanOrEqualTo: safeArea.heightAnchor, multiplier: 0.9),
+            
+            closeButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            closeButton.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20),
+            
+            stackView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            stackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -50),
         ])
     }
     
@@ -141,9 +181,35 @@ extension MRZScannerViewController {
         dce.clearBuffer()
     }
     
-    @objc func buttonClicked() {
+    @objc func onCloseButtonTouchUp() {
         stop()
         onScannedResult?(.init(resultStatus: .canceled))
+    }
+    
+    @objc func onTorchButtonTouchUp(_ sender: Any) {
+        guard let button = sender as? UIButton else { return }
+        button.isSelected.toggle()
+        if button.isSelected {
+            dce.turnOnTorch()
+        } else {
+            dce.turnOffTorch()
+        }
+    }
+    
+    @objc func onCameraButtonTouchUp() {
+        let position = dce.getCameraPosition()
+        switch position {
+        case .back, .backDualWideAuto, .backUltraWide:
+            try? dce.selectCamera(with: .front)
+            torchButton.isHidden = true
+            torchButton.isSelected = false
+        case .front:
+            try? dce.selectCamera(with: .back)
+            torchButton.isHidden = !config.isTorchButtonVisible
+        @unknown default:
+            try? dce.selectCamera(with: .back)
+            torchButton.isHidden = !config.isTorchButtonVisible
+        }
     }
 }
 
@@ -275,5 +341,18 @@ extension MRZScannerViewController: CapturedResultReceiver {
 extension MRZScannerViewController: CameraStateListener {
     public func onCameraStateChanged(_ currentState: CameraState) {
 
+    }
+}
+
+extension MRZScannerViewController: LicenseVerificationListener {
+    
+    private func setupLicense() {
+        if let license = config.license {
+            LicenseManager.initLicense(license, verificationDelegate: self)
+        }
+    }
+    
+    public func onLicenseVerified(_ isSuccess: Bool, error: (any Error)?) {
+        
     }
 }
