@@ -27,6 +27,7 @@
 		681D598C2D1BD81500A22AAB /* DynamsoftUtility in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598B2D1BD81500A22AAB /* DynamsoftUtility */; };
 		681D598E2D1BD87000A22AAB /* DynamsoftImageProcessing in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598D2D1BD87000A22AAB /* DynamsoftImageProcessing */; };
 		681D59902D1BD87900A22AAB /* DynamsoftNeuralNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 681D598F2D1BD87900A22AAB /* DynamsoftNeuralNetwork */; };
+		6866C8F22DAE3154004ECCDA /* mrz.json in Resources */ = {isa = PBXBuildFile; fileRef = 6866C8F12DAE3154004ECCDA /* mrz.json */; };
 		68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */; };
 		68AB7CF02D02D25D009D60B8 /* DynamsoftCameraEnhancer in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CEF2D02D25D009D60B8 /* DynamsoftCameraEnhancer */; };
 		68AB7CF22D02D25D009D60B8 /* DynamsoftCaptureVisionRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 68AB7CF12D02D25D009D60B8 /* DynamsoftCaptureVisionRouter */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		1DC845D52CEB04AE00998CCD /* DynamsoftMRZScannerBundle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamsoftMRZScannerBundle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamsoftMRZScannerBundle.h; sourceTree = "<group>"; };
+		6866C8F12DAE3154004ECCDA /* mrz.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = mrz.json; sourceTree = "<group>"; };
 		68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
 		68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerConfig.swift; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */,
 				68CFBAF52D01794200E125F8 /* MRZScanResult.swift */,
 				68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */,
+				6866C8F12DAE3154004ECCDA /* mrz.json */,
 			);
 			path = DynamsoftMRZScannerBundle;
 			sourceTree = "<group>";
@@ -184,6 +187,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */,
+				6866C8F22DAE3154004ECCDA /* mrz.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +373,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -403,7 +407,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+				MARKETING_VERSION = 2.0.2;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;

@@ -113,6 +113,9 @@ public class MRZScannerActivity extends AppCompatActivity {
 			throw new RuntimeException(e);
 		}
 
+		configCVR();
+		initTorchButton();
+		initToggleButton();
 	}
 
 	private void configCVR() {
@@ -130,6 +133,7 @@ public class MRZScannerActivity extends AppCompatActivity {
 				mCurrentTemplate = "";
 				mRouter.initSettingsFromFile(configuration.getTemplateFilePath());
 			} else {
+				mRouter.initSettingsFromFile("mrz-v2.0.2.json"); //Placed in the assets/Templates folder
 				if (configuration.getDocumentType() != null) {
 					switch (configuration.getDocumentType()) {
 						case DT_ALL:
@@ -162,8 +166,7 @@ public class MRZScannerActivity extends AppCompatActivity {
 		mRouter.startCapturing(template, new CompletionListener() {
 			@Override
 			public void onSuccess() {
-				initTorchButton();
-				initToggleButton();
+
 			}
 
 			// If failed, it shows an error message that describes the reasons.
@@ -245,7 +248,6 @@ public class MRZScannerActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		configCVR();
 
 		// Enable the multi-frame cross verification feature. It will improve the accuracy of the MRZ scanning.
 		MultiFrameResultCrossFilter filter = new MultiFrameResultCrossFilter();

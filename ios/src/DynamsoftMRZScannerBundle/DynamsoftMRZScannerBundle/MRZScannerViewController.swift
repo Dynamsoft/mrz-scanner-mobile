@@ -32,6 +32,10 @@ public class MRZScannerViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dce.open()
+        let mrzPath = Bundle(for: MRZScannerViewController.self).path(forResource: "mrz", ofType: "json")
+        if let path = mrzPath {
+            try? cvr.initSettingsFromFile(path)
+        }
         var name: String
         switch config.documentType {
         case .all:

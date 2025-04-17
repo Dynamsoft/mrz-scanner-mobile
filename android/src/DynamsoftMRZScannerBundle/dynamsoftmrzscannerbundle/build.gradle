@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    releaseVersion = "2.0.1"
+    releaseVersion = "2.0.2"
 }
 
 def localPublishFileExists = file('local_publish.gradle').exists()
