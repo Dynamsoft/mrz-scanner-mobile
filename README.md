@@ -20,7 +20,7 @@ The repository provides you a solution on how to develop a native mobile MRZ sca
 
 ### iOS
 
-- Supported OS: **iOS 11** or higher (**iOS 13** and higher recommended).
+- Supported OS: **iOS 13** or higher.
 - Supported ABI: **arm64** and **x86_64**.
 - Development Environment: Xcode 13 and above (Xcode 14.1+ recommended), CocoaPods 1.11.0+.
 

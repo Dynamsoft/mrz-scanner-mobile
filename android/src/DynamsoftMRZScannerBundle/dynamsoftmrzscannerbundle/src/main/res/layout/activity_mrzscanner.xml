@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
@@ -33,15 +34,20 @@
 		android:layout_alignParentBottom="true"
 		android:gravity="center"
 		android:layout_marginBottom="90dp">
-		<android.widget.Button
+		<androidx.appcompat.widget.AppCompatButton
 			android:id="@+id/btn_torch"
+			android:layout_marginHorizontal="25dp"
+			android:visibility="gone"
+			tools:visibility="visible"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
 			android:background="@drawable/icon_flash_off" />
 
-		<android.widget.Button
+		<androidx.appcompat.widget.AppCompatButton
 			android:id="@+id/btn_toggle"
-			android:layout_marginStart="50dp"
+			android:layout_marginHorizontal="25dp"
+			android:visibility="gone"
+			tools:visibility="visible"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
 			android:background="@drawable/toggle_lens" />
@@ -49,7 +55,7 @@
 	<TextView
 		android:id="@+id/tv_alert"
 		android:layout_alignParentBottom="true"
-		android:textColor="@color/red00"
+		android:textColor="#FFFF0000"
 		android:layout_marginHorizontal="40dp"
 		android:layout_marginBottom="100dp"
 		android:layout_width="wrap_content"

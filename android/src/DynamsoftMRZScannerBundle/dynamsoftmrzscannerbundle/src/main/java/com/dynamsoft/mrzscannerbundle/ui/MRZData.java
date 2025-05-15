@@ -1,11 +1,8 @@
 package com.dynamsoft.mrzscannerbundle.ui;
 
-/**
- * @author: dynamsoft
- * Time: 2024/12/11
- * Description:
- */
-public class MRZData {
+import java.io.Serializable;
+
+public class MRZData implements Serializable {
 	private final String enumDocType;
 	private final String firstName;
 	private final String lastName;

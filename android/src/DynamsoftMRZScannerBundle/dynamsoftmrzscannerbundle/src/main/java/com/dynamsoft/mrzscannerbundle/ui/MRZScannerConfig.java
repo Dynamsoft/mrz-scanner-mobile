@@ -1,16 +1,7 @@
 package com.dynamsoft.mrzscannerbundle.ui;
 
 import java.io.Serializable;
-
-/**
- * @author: dynamsoft
- * Time: 2024/12/2
- * Description:
- */
 public class MRZScannerConfig implements Serializable {
-	public static final String TAG = "MRZScannerConfig";
-	@Deprecated
-	private String templateFilePath;
 	private String license;
 	private boolean isTorchButtonVisible = true;
 	private boolean isBeepEnabled;
@@ -50,16 +41,6 @@ public class MRZScannerConfig implements Serializable {
 
 	public void setLicense(String license) {
 		this.license = license;
-	}
-
-	@Deprecated
-	public String getTemplateFilePath() {
-		return templateFilePath;
-	}
-
-	@Deprecated
-	public void setTemplateFilePath(String templateFilePath) {
-		this.templateFilePath = templateFilePath;
 	}
 
 	public EnumDocumentType getDocumentType() {

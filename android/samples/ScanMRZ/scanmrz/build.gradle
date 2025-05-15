@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 34
         versionCode 4
-        versionName "2.0.0"
+        versionName "3.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "MRZScanner-${versionName}"
@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.dynamsoft:mrzscannerbundle:2.0.2'
+    implementation 'com.dynamsoft:mrzscannerbundle:3.0.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'

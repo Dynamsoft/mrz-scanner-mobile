@@ -7,4 +7,4 @@
    - Drag the `DynamsoftMRZScannerBundle.xcodeproj` into your Xcode project.
 
 3. **Verify Dependencies**
-   - Verify that the necessary libraries and frameworks (e.g., `DynamsoftCore`, `DynamsoftCaptureVisionRouter`, etc.) are linked in your Xcode project's settings.  
+   - Verify that the necessary libraries and frameworks (e.g., `DynamsoftCaptureVisionBundle`, etc.) are linked in your Xcode project's settings.  

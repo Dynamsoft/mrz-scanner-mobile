@@ -5,13 +5,7 @@
 //  Copyright © Dynamsoft Corporation.  All rights reserved.
 //
 
-import DynamsoftCore
-import DynamsoftCameraEnhancer
-import DynamsoftCaptureVisionRouter
-import DynamsoftLicense
-import DynamsoftUtility
-import DynamsoftCodeParser
-import DynamsoftLabelRecognizer
+import DynamsoftCaptureVisionBundle
 
 @objc(DSMRZScannerViewController)
 public class MRZScannerViewController: UIViewController {
@@ -32,7 +26,7 @@ public class MRZScannerViewController: UIViewController {
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dce.open()
-        let mrzPath = Bundle(for: MRZScannerViewController.self).path(forResource: "mrz", ofType: "json")
+        let mrzPath = Bundle(for: MRZScannerViewController.self).path(forResource: "mrz-mobile", ofType: "json")
         if let path = mrzPath {
             try? cvr.initSettingsFromFile(path)
         }
@@ -62,14 +56,6 @@ public class MRZScannerViewController: UIViewController {
                     self.onScannedResult?(.init(resultStatus: .exception, errorCode: error.code, errorString: error.localizedDescription))
                     return
                 }
-            }
-        } else if let path = config.templateFilePath {
-            do {
-                try cvr.initSettingsFromFile(path)
-                name = ""
-            } catch let error as NSError {
-                self.onScannedResult?(.init(resultStatus: .exception, errorCode: error.code, errorString: error.localizedDescription))
-                return
             }
         }
         cvr.startCapturing(name) { isSuccess, error in
@@ -136,7 +122,7 @@ extension MRZScannerViewController {
             cameraView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         dce.cameraView = cameraView
-        try! cvr.setInput(dce)
+        try? cvr.setInput(dce)
         cvr.addResultReceiver(self)
         let filter = MultiFrameResultCrossFilter()
         filter.enableResultCrossVerification(.textLine, isEnabled: true)
