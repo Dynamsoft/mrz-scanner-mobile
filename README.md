@@ -50,7 +50,7 @@ You can request a 30-day trial license via the [Request a Trial License](https:/
 
 If you need further customization on the scanner component, you can refer to the open source code in this repository.
 
-- [Android](Android/src/README.md)
+- [Android](android/src/README.md)
 - [iOS](ios/src/README.md)
 
 ## Contact Us
