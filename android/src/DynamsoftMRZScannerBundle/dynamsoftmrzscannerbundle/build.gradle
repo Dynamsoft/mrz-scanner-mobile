@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    releaseVersion = "3.0.0"
+    releaseVersion = "3.0.3100"
     productName = "MRZScannerBundle"
 }
 
@@ -38,7 +38,7 @@ android {
 }
 
 dependencies {
-    api "com.dynamsoft:capturevisionbundle:3.0.3000"
+    api "com.dynamsoft:capturevisionbundle:3.0.3100"
 
     api 'androidx.appcompat:appcompat:1.6.1'
 }
