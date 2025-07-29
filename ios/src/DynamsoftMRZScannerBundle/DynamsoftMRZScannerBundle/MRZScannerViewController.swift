@@ -190,14 +190,14 @@ extension MRZScannerViewController {
         let position = dce.getCameraPosition()
         switch position {
         case .back, .backDualWideAuto, .backUltraWide:
-            try? dce.selectCamera(with: .front)
+            dce.selectCamera(with: .front, completion: nil)
             torchButton.isHidden = true
             torchButton.isSelected = false
         case .front:
-            try? dce.selectCamera(with: .back)
+            dce.selectCamera(with: .backDualWideAuto, completion: nil)
             torchButton.isHidden = !config.isTorchButtonVisible
         @unknown default:
-            try? dce.selectCamera(with: .back)
+            dce.selectCamera(with: .backDualWideAuto, completion: nil)
             torchButton.isHidden = !config.isTorchButtonVisible
         }
     }
@@ -212,6 +212,9 @@ extension MRZScannerViewController: CapturedResultReceiver {
             stop()
             if config.isBeepEnabled {
                 Feedback.beep()
+            }
+            if config.isVibrateEnabled {
+                Feedback.vibrate()
             }
             onScannedResult?(.init(resultStatus: .finished, mrzdata: mrzdata))
         }

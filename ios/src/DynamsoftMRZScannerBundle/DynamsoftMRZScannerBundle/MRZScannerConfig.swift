@@ -25,4 +25,5 @@ public class MRZScannerConfig: NSObject {
     public var documentType: DocumentType = .all
     public var isGuideFrameVisible: Bool = true
     public var isCameraToggleButtonVisible: Bool = false
+    public var isVibrateEnabled: Bool = false
 }

@@ -8,7 +8,7 @@
 		android:label="@string/app_name"
 		android:supportsRtl="true"
 		android:icon="@mipmap/ic_launcher"
-		android:theme="@style/Theme.PassportScanner">
+		android:theme="@style/Theme.MRZScanner">
 		<activity
 			android:name=".MainActivity"
 			android:exported="true">

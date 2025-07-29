@@ -1,15 +1,25 @@
 package com.dynamsoft.mrzscannerbundle.ui;
 
+import com.dynamsoft.dce.EnumCameraPosition;
+
 import java.io.Serializable;
 public class MRZScannerConfig implements Serializable {
 	private String license;
 	private boolean isTorchButtonVisible = true;
+
+	boolean isTorchOn = false;
 	private boolean isBeepEnabled;
+	private boolean isVibrateEnabled;
 	private boolean isCloseButtonVisible = true;
 	private EnumDocumentType documentType;
 	private boolean guideFrameVisible = true;
 	private boolean isCameraToggleButtonVisible;
+
+	int cameraPosition = EnumCameraPosition.CP_BACK;
+
 	private String templateFile;
+
+	float zoomFactor = 1f;
 
 	public boolean isCloseButtonVisible() {
 		return isCloseButtonVisible;
@@ -25,6 +35,14 @@ public class MRZScannerConfig implements Serializable {
 
 	public void setBeepEnabled(boolean beepEnabled) {
 		isBeepEnabled = beepEnabled;
+	}
+
+	public boolean isVibrateEnabled() {
+		return isVibrateEnabled;
+	}
+
+	public void setVibrateEnabled(boolean vibrateEnabled) {
+		isVibrateEnabled = vibrateEnabled;
 	}
 
 	public boolean isTorchButtonVisible() {

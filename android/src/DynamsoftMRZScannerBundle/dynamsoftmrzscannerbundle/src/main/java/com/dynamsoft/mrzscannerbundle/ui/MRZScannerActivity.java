@@ -2,7 +2,9 @@ package com.dynamsoft.mrzscannerbundle.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +15,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.dynamsoft.core.basic_structures.CompletionListener;
 import com.dynamsoft.core.basic_structures.EnumCapturedResultItemType;
@@ -47,6 +53,9 @@ public class MRZScannerActivity extends AppCompatActivity {
     public final static String EXTRA_NATIONALITY = "extra_nationality";
     public final static String EXTRA_ISSUING_STATE = "extra_issuing_state";
     public final static String EXTRA_NUMBER = "extra_number";
+
+    private static final String KEY_CONFIG = "CONFIG";
+
     private CameraEnhancer mCamera;
     private CameraView mCameraView;
     private Button btnToggle;
@@ -56,8 +65,6 @@ public class MRZScannerActivity extends AppCompatActivity {
     private String mCurrentTemplate = "ReadPassportAndId";
     private MRZScannerConfig configuration;
     private String number;
-    private boolean isTorchOn;
-    private boolean useBackCamera = true;
     private CaptureVisionRouterException exceptionWhenConfigCvr;
 
     @Override
@@ -66,9 +73,26 @@ public class MRZScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mrzscanner);
         PermissionUtil.requestCameraPermission(this);
 
-        Intent requestIntent = getIntent();
-        if (requestIntent != null) {
-            configuration = (MRZScannerConfig) requestIntent.getSerializableExtra(EXTRA_SCANNER_CONFIG);
+        boolean isLight = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO;
+        WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        wic.setAppearanceLightStatusBars(isLight);
+        wic.setAppearanceLightNavigationBars(isLight);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        if (savedInstanceState != null) {
+            configuration = (MRZScannerConfig) savedInstanceState.getSerializable(KEY_CONFIG);
+        }
+
+        if (configuration == null) {
+            Intent requestIntent = getIntent();
+            if (requestIntent != null) {
+                configuration = (MRZScannerConfig) requestIntent.getSerializableExtra(EXTRA_SCANNER_CONFIG);
+            }
         }
         assert configuration != null;
 
@@ -97,17 +121,7 @@ public class MRZScannerActivity extends AppCompatActivity {
         ImageView guideFrame = findViewById(R.id.iv_guide_frame);
         guideFrame.setVisibility(configuration.isGuideFrameVisible() ? View.VISIBLE : View.GONE);
 
-        mCameraView = findViewById(R.id.dce_camera_view);
-        // CameraEnhancer is the class for controlling the camera and obtaining high-quality video input.
-        mCamera = new CameraEnhancer(mCameraView, this);
-
-        // Enable the frame filter feature. It will improve the accuracy of the MRZ scanning.
-        try {
-            mCamera.enableEnhancedFeatures(EnumEnhancerFeatures.EF_FRAME_FILTER);
-        } catch (CameraEnhancerException e) {
-            e.printStackTrace();
-        }
-
+        initCamera();
         initCVR();
         try {
             configCVR();
@@ -116,6 +130,33 @@ public class MRZScannerActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putSerializable(KEY_CONFIG, configuration);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mCamera.setZoomFactorChangeListener(null);
+    }
+
+    private void initCamera() {
+        mCameraView = findViewById(R.id.dce_camera_view);
+        // CameraEnhancer is the class for controlling the camera and obtaining high-quality video input.
+        mCamera = new CameraEnhancer(mCameraView, this);
+
+        mCamera.selectCamera(configuration.cameraPosition);
+        // Enable the frame filter feature. It will improve the accuracy of the MRZ scanning.
+        try {
+            mCamera.enableEnhancedFeatures(EnumEnhancerFeatures.EF_FRAME_FILTER);
+        } catch (CameraEnhancerException e) {
+            e.printStackTrace();
+        }
+        mCamera.setZoomFactor(configuration.zoomFactor);
+        mCamera.setZoomFactorChangeListener(factor-> configuration.zoomFactor = factor);
+    }
     private void initCVR() {
         mRouter = new CaptureVisionRouter();
         // Enable the multi-frame cross verification feature. It will improve the accuracy of the MRZ scanning.
@@ -183,11 +224,12 @@ public class MRZScannerActivity extends AppCompatActivity {
     private void initTorchButton() {
         btnTorch.setVisibility(configuration.isTorchButtonVisible() ? View.VISIBLE : View.GONE);
         btnTorch.setOnClickListener(v -> {
-            isTorchOn = !isTorchOn;
-            if (isTorchOn) {
+            if (!configuration.isTorchOn) {
                 turnOnTorch();
+                configuration.isTorchOn = true;
             } else {
                 turnOffTorch();
+                configuration.isTorchOn = false;
             }
         });
     }
@@ -209,13 +251,14 @@ public class MRZScannerActivity extends AppCompatActivity {
             resetToggleButton(0);
         }
         btnToggle.setOnClickListener(v -> {
-            useBackCamera = !useBackCamera;
-            mCamera.selectCamera(useBackCamera ? EnumCameraPosition.CP_BACK : EnumCameraPosition.CP_FRONT);
+            configuration.cameraPosition = (configuration.cameraPosition + 1) % 2;
+            mCamera.selectCamera(configuration.cameraPosition);
             if (configuration.isTorchButtonVisible()) {
-                btnTorch.setVisibility(useBackCamera ? View.VISIBLE : View.GONE);
-                resetToggleButton(useBackCamera ? dpToPx(50) : 0);
-                if (!useBackCamera) {
-                    isTorchOn = false;
+                boolean useBackCam = configuration.cameraPosition == EnumCameraPosition.CP_BACK;
+                btnTorch.setVisibility(useBackCam ? View.VISIBLE : View.GONE);
+                resetToggleButton(useBackCam ? dpToPx(50) : 0);
+                if (!useBackCam) {
+                    configuration.isTorchOn = false;
                     turnOffTorch();
                 }
             }
@@ -225,7 +268,7 @@ public class MRZScannerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(exceptionWhenConfigCvr != null) {
+        if (exceptionWhenConfigCvr != null) {
             resultError(exceptionWhenConfigCvr.getErrorCode(), exceptionWhenConfigCvr.getMessage());
             finish();
             return;
@@ -281,7 +324,10 @@ public class MRZScannerActivity extends AppCompatActivity {
         if (result.getItems().length != 0) {
             if (formerFilter(result.getItems()[0])) {
                 if (configuration.isBeepEnabled()) {
-                    Feedback.beep(this);
+                    Feedback.beep();
+                }
+                if (configuration.isVibrateEnabled()) {
+                    Feedback.vibrate();
                 }
                 succeed = true;
                 resultOK(MRZScanResult.EnumResultStatus.RS_FINISHED, result.getItems()[0]);
