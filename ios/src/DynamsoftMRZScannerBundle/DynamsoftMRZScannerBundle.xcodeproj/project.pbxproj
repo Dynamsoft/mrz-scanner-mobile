@@ -27,6 +27,7 @@
 		682724D12DD5D208006B541B /* DynamsoftCaptureVisionBundle in Frameworks */ = {isa = PBXBuildFile; productRef = 682724D02DD5D208006B541B /* DynamsoftCaptureVisionBundle */; };
 		683734072DBB725500EB72FF /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 683734062DBB725500EB72FF /* Models */; };
 		6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6866C8F12DAE3154004ECCDA /* mrz-mobile.json */; };
+		68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */; };
 		68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */; };
 		68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */; };
 		68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */; };
@@ -38,6 +39,7 @@
 		1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamsoftMRZScannerBundle.h; sourceTree = "<group>"; };
 		683734062DBB725500EB72FF /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = DynamsoftMRZScannerBundle/Models; sourceTree = "<group>"; };
 		6866C8F12DAE3154004ECCDA /* mrz-mobile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mrz-mobile.json"; sourceTree = "<group>"; };
+		68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
 		68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerConfig.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 		1DC845D72CEB04AE00998CCD /* DynamsoftMRZScannerBundle */ = {
 			isa = PBXGroup;
 			children = (
+				68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */,
 				1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */,
 				68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */,
 				68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */,
@@ -173,6 +176,7 @@
 			files = (
 				68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */,
 				6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */,
+				68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */,
 				683734072DBB725500EB72FF /* Models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -359,7 +363,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5000;
+				MARKETING_VERSION = 3.0.5200;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -393,7 +397,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5000;
+				MARKETING_VERSION = 3.0.5200;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
