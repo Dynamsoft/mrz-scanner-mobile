@@ -30,6 +30,7 @@ import com.dynamsoft.dce.CameraEnhancerException;
 import com.dynamsoft.dce.CameraView;
 import com.dynamsoft.dce.DrawingLayer;
 import com.dynamsoft.dce.EnumCameraPosition;
+import com.dynamsoft.dce.EnumCameraState;
 import com.dynamsoft.dce.EnumEnhancerFeatures;
 import com.dynamsoft.dce.Feedback;
 import com.dynamsoft.dce.utils.PermissionUtil;
@@ -39,6 +40,7 @@ import com.dynamsoft.dcp.ParsedResultItem;
 import com.dynamsoft.dlr.RecognizedTextLinesResult;
 import com.dynamsoft.license.LicenseManager;
 import com.dynamsoft.mrzscannerbundle.R;
+import com.dynamsoft.mrzscannerbundle.ui.utils.ViewUtil;
 import com.dynamsoft.utility.MultiFrameResultCrossFilter;
 
 import java.util.HashMap;
@@ -58,8 +60,6 @@ public class MRZScannerActivity extends AppCompatActivity {
 
     private CameraEnhancer mCamera;
     private CameraView mCameraView;
-    private Button btnToggle;
-    private Button btnTorch;
     private CaptureVisionRouter mRouter;
     private boolean succeed = false;
     private String mCurrentTemplate = "ReadPassportAndId";
@@ -106,10 +106,6 @@ public class MRZScannerActivity extends AppCompatActivity {
                 }
             });
         }
-        btnToggle = findViewById(R.id.btn_toggle);
-        btnTorch = findViewById(R.id.btn_torch);
-        initTorchButton();
-        initToggleButton();
 
         ImageView closeButton = findViewById(R.id.iv_back);
         closeButton.setVisibility(configuration.isCloseButtonVisible() ? View.VISIBLE : View.GONE);
@@ -156,6 +152,12 @@ public class MRZScannerActivity extends AppCompatActivity {
         }
         mCamera.setZoomFactor(configuration.zoomFactor);
         mCamera.setZoomFactorChangeListener(factor-> configuration.zoomFactor = factor);
+
+        mCamera.setCameraStateListener(state -> {
+            if (state == EnumCameraState.OPENED) {
+                ViewUtil.configCameraViewButton(mCamera, configuration);
+            }
+        });
     }
     private void initCVR() {
         mRouter = new CaptureVisionRouter();
@@ -211,59 +213,6 @@ public class MRZScannerActivity extends AppCompatActivity {
         }
     }
 
-    private void turnOnTorch() {
-        mCamera.turnOnTorch();
-        btnTorch.setBackground(ContextCompat.getDrawable(this, R.drawable.icon_flash_on));
-    }
-
-    private void turnOffTorch() {
-        mCamera.turnOffTorch();
-        btnTorch.setBackground(ContextCompat.getDrawable(this, R.drawable.icon_flash_off));
-    }
-
-    private void initTorchButton() {
-        btnTorch.setVisibility(configuration.isTorchButtonVisible() ? View.VISIBLE : View.GONE);
-        btnTorch.setOnClickListener(v -> {
-            if (!configuration.isTorchOn) {
-                turnOnTorch();
-                configuration.isTorchOn = true;
-            } else {
-                turnOffTorch();
-                configuration.isTorchOn = false;
-            }
-        });
-    }
-
-    private void resetToggleButton(int margin) {
-        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) btnToggle.getLayoutParams();
-        params.setMarginStart(margin);
-        btnToggle.setLayoutParams(params);
-    }
-
-    public int dpToPx(int dp) {
-        float density = getResources().getDisplayMetrics().density;
-        return Math.round(dp * density);
-    }
-
-    private void initToggleButton() {
-        btnToggle.setVisibility(configuration.isCameraToggleButtonVisible() ? View.VISIBLE : View.GONE);
-        if (!configuration.isTorchButtonVisible() && configuration.isCameraToggleButtonVisible()) {
-            resetToggleButton(0);
-        }
-        btnToggle.setOnClickListener(v -> {
-            configuration.cameraPosition = (configuration.cameraPosition + 1) % 2;
-            mCamera.selectCamera(configuration.cameraPosition);
-            if (configuration.isTorchButtonVisible()) {
-                boolean useBackCam = configuration.cameraPosition == EnumCameraPosition.CP_BACK;
-                btnTorch.setVisibility(useBackCam ? View.VISIBLE : View.GONE);
-                resetToggleButton(useBackCam ? dpToPx(50) : 0);
-                if (!useBackCam) {
-                    configuration.isTorchOn = false;
-                    turnOffTorch();
-                }
-            }
-        });
-    }
 
     @Override
     protected void onResume() {

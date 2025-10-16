@@ -8,13 +8,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dynamsoft</groupId>
   <artifactId>mrzscannerbundle</artifactId>
-  <version>3.0.5000</version>
+  <version>3.2.1000</version>
   <packaging>aar</packaging>
   <dependencies>
     <dependency>
       <groupId>com.dynamsoft</groupId>
       <artifactId>capturevisionbundle</artifactId>
-      <version>3.0.5000</version>
+      <version>3.2.1000</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

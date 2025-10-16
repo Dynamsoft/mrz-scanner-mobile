@@ -25,7 +25,7 @@
 /* Begin PBXBuildFile section */
 		1DC845D92CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h in Headers */ = {isa = PBXBuildFile; fileRef = 1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		682724D12DD5D208006B541B /* DynamsoftCaptureVisionBundle in Frameworks */ = {isa = PBXBuildFile; productRef = 682724D02DD5D208006B541B /* DynamsoftCaptureVisionBundle */; };
-		683734072DBB725500EB72FF /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 683734062DBB725500EB72FF /* Models */; };
+		6859ADB82E7AB92600D35402 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 6859ADB72E7AB92600D35402 /* Models */; };
 		6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6866C8F12DAE3154004ECCDA /* mrz-mobile.json */; };
 		68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */; };
 		68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */; };
@@ -37,7 +37,7 @@
 /* Begin PBXFileReference section */
 		1DC845D52CEB04AE00998CCD /* DynamsoftMRZScannerBundle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DynamsoftMRZScannerBundle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DynamsoftMRZScannerBundle.h; sourceTree = "<group>"; };
-		683734062DBB725500EB72FF /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Models; path = DynamsoftMRZScannerBundle/Models; sourceTree = "<group>"; };
+		6859ADB72E7AB92600D35402 /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Models; sourceTree = "<group>"; };
 		6866C8F12DAE3154004ECCDA /* mrz-mobile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mrz-mobile.json"; sourceTree = "<group>"; };
 		68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 		1DC845CB2CEB04AE00998CCD = {
 			isa = PBXGroup;
 			children = (
-				683734062DBB725500EB72FF /* Models */,
+				6859ADB72E7AB92600D35402 /* Models */,
 				1DC845D72CEB04AE00998CCD /* DynamsoftMRZScannerBundle */,
 				681D598A2D1BD81500A22AAB /* Frameworks */,
 				1DC845D62CEB04AE00998CCD /* Products */,
@@ -176,8 +176,8 @@
 			files = (
 				68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */,
 				6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */,
+				6859ADB82E7AB92600D35402 /* Models in Resources */,
 				68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */,
-				683734072DBB725500EB72FF /* Models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,7 +199,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# xcframework\nset -e\n# Sets\nreadonly target_name=${PROJECT_NAME}\nreadonly framework_name=${target_name}\nbuild_dir=\"build\"\nxcarchive_iOS=${build_dir}/${framework_name}_iOS.xcarchive\nxcarchive_iOSSimulator=${build_dir}/${framework_name}_iOSSimulator.xcarchive\n\ndSYM_iOS=${xcarchive_iOS}/dSYMs/${framework_name}.framework.dSYM\ndSYM_iOSSimulator=${xcarchive_iOSSimulator}/dSYMs/${framework_name}.framework.dSYM\n\n# Clean oldest\nfunction build_clean {\n    printf \"====build_clean====\"\n    if [ -d ${build_dir} ]\n    then\n        rm -rf ${build_dir}\n    fi\n}\n\n# Build frameworks\nfunction build_frameworks {\n    printf \"====build_frameworks====\"\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS\" -archivePath ${xcarchive_iOS} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS Simulator\" -archivePath ${xcarchive_iOSSimulator} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n}\n\n# Build xcframework\nfunction build_xcframework {\n    printf \"====build_xcframework====\"\n    xcodebuild -create-xcframework -archive ${xcarchive_iOS} -framework \"${framework_name}.framework\" -archive ${xcarchive_iOSSimulator} -framework \"${framework_name}.framework\" -output \"${build_dir}/${framework_name}.xcframework\"\n}\n\n# do\nbuild_clean\nbuild_frameworks\nbuild_xcframework\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# xcframework\nset -e\n# Sets\nreadonly target_name=${PROJECT_NAME}\nreadonly framework_name=${target_name}\nbuild_dir=\"build\"\nxcarchive_iOS=${build_dir}/${framework_name}_iOS.xcarchive\nxcarchive_iOSSimulator=${build_dir}/${framework_name}_iOSSimulator.xcarchive\n\ndSYM_iOS=${xcarchive_iOS}/dSYMs/${framework_name}.framework.dSYM\ndSYM_iOSSimulator=${xcarchive_iOSSimulator}/dSYMs/${framework_name}.framework.dSYM\n\n# Check Models directory\nfunction check_models {\n    printf \"====check_models====\\n\"\n    models_dir=\"$(dirname \"${PROJECT_FILE_PATH}\")/Models\"\n\n    if [ ! -d \"$models_dir\" ]; then\n        echo \"❌ Error: Models directory not found at $models_dir\"\n        exit 1\n    fi\n\n    echo \"📂 Checking files in $models_dir ...\"\n    ls -al \"$models_dir\"\n\n    # Find files other than .gitkeep and .DS_Store\n    files=$(find \"$models_dir\" -type f ! -name \".gitkeep\" ! -name \".DS_Store\")\n\n    if [ -z \"$files\" ]; then\n        echo \"❌ Error: Models directory is empty (only .gitkeep/.DS_Store found). Please add model files.\"\n        exit 1\n    fi\n\n    echo \"✅ Models directory check passed.\"\n}\n\n# Clean oldest\nfunction build_clean {\n    printf \"====build_clean====\"\n    if [ -d ${build_dir} ]\n    then\n        rm -rf ${build_dir}\n    fi\n}\n\n# Build frameworks\nfunction build_frameworks {\n    printf \"====build_frameworks====\"\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS\" -archivePath ${xcarchive_iOS} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS Simulator\" -archivePath ${xcarchive_iOSSimulator} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n}\n\n# Build xcframework\nfunction build_xcframework {\n    printf \"====build_xcframework====\"\n    xcodebuild -create-xcframework -archive ${xcarchive_iOS} -framework \"${framework_name}.framework\" -archive ${xcarchive_iOSSimulator} -framework \"${framework_name}.framework\" -output \"${build_dir}/${framework_name}.xcframework\"\n}\n\n# do\ncheck_models\nbuild_clean\nbuild_frameworks\nbuild_xcframework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -363,7 +363,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5200;
+				MARKETING_VERSION = 3.2.1000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -397,12 +397,13 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.5200;
+				MARKETING_VERSION = 3.2.1000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				STRIP_STYLE = "non-global";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -467,7 +468,7 @@
 			repositoryURL = "https://github.com/Dynamsoft/capture-vision-spm";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.5000;
+				minimumVersion = 3.2.1000;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
