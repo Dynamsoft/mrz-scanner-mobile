@@ -2,19 +2,17 @@ package com.dynamsoft.mrzscannerbundle.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.ImageView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,9 +20,10 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.dynamsoft.core.basic_structures.CompletionListener;
 import com.dynamsoft.core.basic_structures.EnumCapturedResultItemType;
-import com.dynamsoft.cvr.CaptureVisionRouter;
+import com.dynamsoft.core.basic_structures.EnumColourChannelUsageType;
 import com.dynamsoft.cvr.CaptureVisionRouterException;
-import com.dynamsoft.cvr.CapturedResultReceiver;
+import com.dynamsoft.cvr.SimplifiedCaptureVisionSettings;
+import com.dynamsoft.cvr.intermediate_results.IntermediateResultManager;
 import com.dynamsoft.dce.CameraEnhancer;
 import com.dynamsoft.dce.CameraEnhancerException;
 import com.dynamsoft.dce.CameraView;
@@ -34,38 +33,30 @@ import com.dynamsoft.dce.EnumCameraState;
 import com.dynamsoft.dce.EnumEnhancerFeatures;
 import com.dynamsoft.dce.Feedback;
 import com.dynamsoft.dce.utils.PermissionUtil;
-import com.dynamsoft.dcp.EnumValidationStatus;
-import com.dynamsoft.dcp.ParsedResult;
-import com.dynamsoft.dcp.ParsedResultItem;
-import com.dynamsoft.dlr.RecognizedTextLinesResult;
 import com.dynamsoft.license.LicenseManager;
 import com.dynamsoft.mrzscannerbundle.R;
-import com.dynamsoft.mrzscannerbundle.ui.utils.ViewUtil;
 import com.dynamsoft.utility.MultiFrameResultCrossFilter;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 public class MRZScannerActivity extends AppCompatActivity {
     public final static String EXTRA_SCANNER_CONFIG = "scanner_config";
-    public final static String EXTRA_STATUS_CODE = "extra_status_code";
-    public final static String EXTRA_ERROR_CODE = "extra_error_code";
-    public final static String EXTRA_ERROR_STRING = "extra_error_string";
-    public final static String EXTRA_RESULT = "extra_result";
-    public final static String EXTRA_DOC_TYPE = "extra_doc_type";
-    public final static String EXTRA_NATIONALITY = "extra_nationality";
-    public final static String EXTRA_ISSUING_STATE = "extra_issuing_state";
-    public final static String EXTRA_NUMBER = "extra_number";
-
     private static final String KEY_CONFIG = "CONFIG";
+    private static final String TAG = "MRZScannerActivity";
+
+    static {
+        System.loadLibrary("DynamsoftMRZScannerBundleJni");
+    }
 
     private CameraEnhancer mCamera;
     private CameraView mCameraView;
-    private CaptureVisionRouter mRouter;
-    private boolean succeed = false;
+    private final MRZScanner mScanner = new MRZScanner();
     private String mCurrentTemplate = "ReadPassportAndId";
     private MRZScannerConfig configuration;
-    private String number;
     private CaptureVisionRouterException exceptionWhenConfigCvr;
+
+    private MRZScanResult mergeResult = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,15 +64,26 @@ public class MRZScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mrzscanner);
         PermissionUtil.requestCameraPermission(this);
 
-        boolean isLight = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO;
-        WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
-        wic.setAppearanceLightStatusBars(isLight);
-        wic.setAppearanceLightNavigationBars(isLight);
-
+        Window window = getWindow();
+        if (window != null) {
+            WindowInsetsControllerCompat wic = new WindowInsetsControllerCompat(window, window.getDecorView());
+            wic.setAppearanceLightStatusBars(false);
+            wic.setAppearanceLightNavigationBars(false);
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+
+            findViewById(R.id.status_bar_background).getLayoutParams().height = systemBars.top;
             return WindowInsetsCompat.CONSUMED;
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                resultCanceled();
+                mergeResult = null;
+            }
         });
 
         if (savedInstanceState != null) {
@@ -101,22 +103,13 @@ public class MRZScannerActivity extends AppCompatActivity {
         // You can request an extension via the following link: https://www.dynamsoft.com/customer/license/trialLicense?product=mrz&utm_source=samples&package=android
         if (configuration.getLicense() != null) {
             LicenseManager.initLicense(configuration.getLicense(), (isSuccess, error) -> {
-                if (!isSuccess) {
-                    error.printStackTrace();
+                if (!isSuccess && error != null) {
+                    Log.e("MRZScannerActivity", "InitLicense failed. ", error);
                 }
             });
         }
 
-        ImageView closeButton = findViewById(R.id.iv_back);
-        closeButton.setVisibility(configuration.isCloseButtonVisible() ? View.VISIBLE : View.GONE);
-        closeButton.setOnClickListener((v) -> {
-            resultOK(MRZScanResult.EnumResultStatus.RS_CANCELED, null);
-            finish();
-        });
-
-        ImageView guideFrame = findViewById(R.id.iv_guide_frame);
-        guideFrame.setVisibility(configuration.isGuideFrameVisible() ? View.VISIBLE : View.GONE);
-
+        initView();
         initCamera();
         initCVR();
         try {
@@ -124,76 +117,282 @@ public class MRZScannerActivity extends AppCompatActivity {
         } catch (CaptureVisionRouterException e) {
             exceptionWhenConfigCvr = e;
         }
+        initBottomSelector();
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_CONFIG, configuration);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mCamera.setZoomFactorChangeListener(null);
+    private void initView() {
+        View topBar = findViewById(R.id.top_bar);
+        ImageView closeButton = topBar.findViewById(R.id.iv_close);
+        closeButton.setVisibility(configuration.isCloseButtonVisible() ? View.VISIBLE : View.GONE);
+        closeButton.setOnClickListener((v) -> getOnBackPressedDispatcher().onBackPressed());
+
+        ImageView toggleFlashLight = topBar.findViewById(R.id.iv_toggle_flashlight);
+        toggleFlashLight.setVisibility(configuration.isTorchButtonVisible() ? View.VISIBLE : View.GONE);
+        toggleFlashLight.setOnClickListener(v -> {
+            if (toggleFlashLight.isSelected()) {
+                mCamera.turnOffTorch();
+                toggleFlashLight.setSelected(false);
+            } else {
+                mCamera.turnOnTorch();
+                toggleFlashLight.setSelected(true);
+            }
+        });
+
+        ImageView toggleCamera = topBar.findViewById(R.id.iv_toggle_camera);
+        toggleCamera.setVisibility(configuration.isCameraToggleButtonVisible() ? View.VISIBLE : View.GONE);
+        toggleCamera.setOnClickListener(v -> {
+            if (toggleCamera.isSelected()) {
+                mCamera.selectCamera(EnumCameraPosition.CP_BACK);
+                toggleCamera.setSelected(false);
+            } else {
+                mCamera.selectCamera(EnumCameraPosition.CP_FRONT);
+                toggleCamera.setSelected(true);
+            }
+        });
+
+        ImageView toggleAudio = topBar.findViewById(R.id.iv_toggle_audio);
+        toggleAudio.setVisibility(configuration.isBeepButtonVisible() ? View.VISIBLE : View.GONE);
+        toggleAudio.setSelected(configuration.isBeepEnabled());
+        toggleAudio.setOnClickListener(v -> {
+            if (toggleAudio.isSelected()) {
+                configuration.setBeepEnabled(false);
+                toggleAudio.setSelected(false);
+            } else {
+                configuration.setBeepEnabled(true);
+                toggleAudio.setSelected(true);
+            }
+        });
+
+        ImageView toggleVibrate = topBar.findViewById(R.id.iv_toggle_vibrate);
+        toggleVibrate.setVisibility(configuration.isVibrateButtonVisible() ? View.VISIBLE : View.GONE);
+        toggleVibrate.setSelected(configuration.isVibrateEnabled());
+        toggleVibrate.setOnClickListener(v -> {
+            if (toggleVibrate.isSelected()) {
+                configuration.setVibrateEnabled(false);
+                toggleVibrate.setSelected(false);
+            } else {
+                configuration.setVibrateEnabled(true);
+                toggleVibrate.setSelected(true);
+            }
+        });
+
+        if ((!configuration.isBeepButtonVisible() && !configuration.isVibrateButtonVisible()) ||
+                (!configuration.isTorchButtonVisible() && !configuration.isCameraToggleButtonVisible())) {
+            topBar.findViewById(R.id.divider).setVisibility(View.GONE);
+        }
+
+        if ((!configuration.isVibrateButtonVisible() && !configuration.isBeepButtonVisible()) ||
+                (!configuration.isTorchButtonVisible() && !configuration.isVibrateButtonVisible())) {
+            topBar.findViewById(R.id.divider).setVisibility(View.GONE);
+        }
+
+        View guideFrame = findViewById(R.id.iv_guide_frame);
+        guideFrame.setVisibility(configuration.isGuideFrameVisible() ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    // Need to be called after configCVR
+    private void initBottomSelector() {
+        String[] templateNames = mScanner.getTemplateNames();
+        BottomBarSelector bottomSelector = findViewById(R.id.bottom_bar);
+        if (templateNames.length < 3) {
+            bottomSelector.setVisibility(View.GONE);
+            return;
+        }
+
+        List<String> templateNameList = Arrays.asList(templateNames);
+        if (!templateNameList.contains("ReadPassportAndId") ||
+                !templateNameList.contains("ReadPassport") ||
+                !templateNameList.contains("ReadId")) {
+            bottomSelector.setVisibility(View.GONE);
+            return;
+        }
+
+        bottomSelector.setVisibility(configuration.isFormatSelectorVisible() ? View.VISIBLE : View.GONE);
+
+        // Use stable keys, not UI labels.
+        bottomSelector.selectItem(configuration.getDocumentType() == EnumDocumentType.DT_ID ? BottomBarSelector.KEY_ID :
+                configuration.getDocumentType() == EnumDocumentType.DT_PASSPORT ? BottomBarSelector.KEY_PASSPORT : BottomBarSelector.KEY_BOTH);
+
+        bottomSelector.addOnSelectedItemChangedListener(key -> {
+            try {
+                switch (key) {
+                    case BottomBarSelector.KEY_ID:
+                        mScanner.switchCapturingTemplate("ReadId");
+                        break;
+                    case BottomBarSelector.KEY_BOTH:
+                        mScanner.switchCapturingTemplate("ReadPassportAndId");
+                        break;
+                    case BottomBarSelector.KEY_PASSPORT:
+                        mScanner.switchCapturingTemplate("ReadPassport");
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e("MRZScannerActivity", "Failed to switch capturing template: " + key, e);
+            }
+        });
+
     }
 
     private void initCamera() {
         mCameraView = findViewById(R.id.dce_camera_view);
+        mCameraView.getDrawingLayer(DrawingLayer.DLR_LAYER_ID).setVisible(false);
+        mCameraView.getDrawingLayer(DrawingLayer.DDN_LAYER_ID).setVisible(false);
+
         // CameraEnhancer is the class for controlling the camera and obtaining high-quality video input.
         mCamera = new CameraEnhancer(mCameraView, this);
+        mCamera.setColourChannelUsageType(EnumColourChannelUsageType.CCUT_FULL_CHANNEL);
 
         mCamera.selectCamera(configuration.cameraPosition);
         // Enable the frame filter feature. It will improve the accuracy of the MRZ scanning.
         try {
             mCamera.enableEnhancedFeatures(EnumEnhancerFeatures.EF_FRAME_FILTER);
-        } catch (CameraEnhancerException e) {
-            e.printStackTrace();
+        } catch (CameraEnhancerException ignore) {
         }
         mCamera.setZoomFactor(configuration.zoomFactor);
-        mCamera.setZoomFactorChangeListener(factor-> configuration.zoomFactor = factor);
+        mCamera.setZoomFactorChangeListener(factor -> configuration.zoomFactor = factor);
 
         mCamera.setCameraStateListener(state -> {
             if (state == EnumCameraState.OPENED) {
-                ViewUtil.configCameraViewButton(mCamera, configuration);
+                configuration.cameraPosition = mCamera.getCameraPosition();
+//                ViewUtil.configCameraViewButton(mCamera, configuration);
             }
         });
     }
+
     private void initCVR() {
-        mRouter = new CaptureVisionRouter();
         // Enable the multi-frame cross verification feature. It will improve the accuracy of the MRZ scanning.
         MultiFrameResultCrossFilter filter = new MultiFrameResultCrossFilter();
-        filter.enableResultCrossVerification(EnumCapturedResultItemType.CRIT_TEXT_LINE, true);
-        mRouter.addResultFilter(filter);
+        filter.enableResultCrossVerification(EnumCapturedResultItemType.CRIT_TEXT_LINE | EnumCapturedResultItemType.CRIT_DESKEWED_IMAGE | EnumCapturedResultItemType.CRIT_DETECTED_QUAD, true);
+        filter.setResultCrossVerificationCriteria(
+                EnumCapturedResultItemType.CRIT_DESKEWED_IMAGE | EnumCapturedResultItemType.CRIT_DETECTED_QUAD,
+                configuration.getCriteria());
+        mScanner.addResultFilter(filter);
 
+        mScanner.setReturnPortraitImage(configuration.isReturnPortraitImage());
+        mScanner.setReturnDocumentImage(configuration.isReturnDocumentImage());
+        mScanner.setReturnOriginalImage(configuration.isReturnOriginalImage());
 
-        mRouter.addResultReceiver(new CapturedResultReceiver() {
-
-            // Implement this method to receive raw MRZ recognized results. It includes the string only.
+        mScanner.setMRZDataReceiver(new MRZScanner.MRZScanResultReceiver() {
             @Override
-            public void onRecognizedTextLinesReceived(@NonNull RecognizedTextLinesResult result) {
-            }
+            public void onMRZDataReceived(@NonNull MRZScanResult scanResult) {
+                // This callback may be invoked on a worker thread.
 
-            // Implement this method to receive parsed MRZ results. It includes the detailed information.
-            @Override
-            public void onParsedResultsReceived(@NonNull ParsedResult result) {
-                if (!succeed) {
-                    onParsedResultReceived(result);
+                assert scanResult.mrzData != null;
+
+                boolean isNewMRZData = mergeResult == null || !scanResult.mrzData.mrzText.equals(mergeResult.mrzData.mrzText);
+                boolean hasPortrait = scanResult.portraitImageInstance != 0;
+                if (mergeResult == null) { // The first MRZData received, start timeout
+                    makeFeedback(configuration); // The first MRZData received, provide feedback if needed.
+                    CustomAnimator.runOnMainThreadDelayed(5000, () -> {
+                        CustomAnimator.showTip(findViewById(R.id.tv_tip), 5, 0, null);
+                        CustomAnimator.showNoPortraitTip(findViewById(R.id.no_portrait_tip_container));
+                        View tvNoPortrait = findViewById(R.id.tv_no_portrait_tip);
+                        if(tvNoPortrait != null) {
+                            tvNoPortrait.setOnClickListener(v -> resultOK(mergeResult));
+                        }
+                    });
+                } else if(mergeResult.mrzData.mrzText != null && !mergeResult.mrzData.mrzText.equals(scanResult.mrzData.mrzText)) { // A different MRZData received, reset timeout
+                    makeFeedback(configuration); // A different MRZData received, provide feedback if needed.
+                }
+
+                mergeResult = scanResult;
+
+
+
+                if (!configuration.isReturnPortraitImage() || hasPortrait) {
+                    // Stop capturing on the worker thread.
+                    mScanner.stopCapturing();
+
+                    // UI work: animations + finishing activity.
+                    runOnUiThread(() -> {
+                        makeFeedback(configuration); // Scanning finished, provide feedback if needed.
+                        CustomAnimator.sequence()
+                                .then(next -> CustomAnimator.showGuideTextZoneAnimate(findViewById(R.id.iv_guide_frame), true, next::run))
+                                .then(next -> CustomAnimator.showTip(findViewById(R.id.tv_tip), configuration.isReturnPortraitImage() ? 20 : 22, 300, next::run))
+                                .then(() -> {
+                                    if (mergeResult != null) { // May be assigned to null in handleOnBackPressed().
+                                        resultOK(mergeResult); // onMRZDataReceived
+                                    }
+                                })
+                                .start();
+                    });
+                } else { //configuration.isReturnPortraitImage() && scanResult.portraitImageInstance == 0
+                    // UI work: show guidance and disable selector.
+                    runOnUiThread(() -> {
+                        if(isNewMRZData) { //Only show the tip animation when a new MRZData is received, otherwise it may be too frequent and annoying.
+                            CustomAnimator.sequence()
+                                    .then(next -> CustomAnimator.showGuideTextZoneAnimate(findViewById(R.id.iv_guide_frame), true, next::run))
+                                    .then(next -> CustomAnimator.showTip(findViewById(R.id.tv_tip),
+                                            mergeResult.mrzData.documentType.equals("MRTD_TD3_PASSPORT") ? 4 : 21,
+                                            0, next::run))
+                                    .start();
+                            findViewById(R.id.bottom_bar).setEnabled(false);
+                        }
+                    });
                 }
             }
+
+            @Override
+            public void onNoMRZPageReceived(@NonNull MRZScanResult scanResult) {
+                // This callback may be invoked on a worker thread.
+                assert scanResult.mrzData == null;
+                if (mergeResult == null) {
+                    return;
+                }
+
+                if (configuration.isReturnPortraitImage() && scanResult.portraitImageInstance == 0) {
+                    return;
+                }
+
+
+                // The C++ objects held by scanResult are handed over to mergeResult for management,
+                // so retainAllImageInstances is called to increase the reference count.
+                scanResult.retainAllImageInstances();
+
+                // Merge results on the worker thread.
+                mergeResult.portraitImageInstance = scanResult.portraitImageInstance;
+                mergeResult.anotherPageOriginalImageInstance = scanResult.anotherPageOriginalImageInstance;
+                mergeResult.anotherPageDocumentImageInstance = scanResult.anotherPageDocumentImageInstance;
+
+                // Stop capturing on the worker thread.
+                mScanner.stopCapturing();
+
+                // Provide feedback ASAP; it doesn't touch UI.
+                makeFeedback(configuration);
+
+                // UI work: animations + finishing activity.
+                runOnUiThread(() -> {
+                    CustomAnimator.sequence()
+                            .then(next -> CustomAnimator.showGuideTextZoneAnimate(findViewById(R.id.iv_guide_frame), true, next::run))
+                            .then(next -> CustomAnimator.showTip(findViewById(R.id.tv_tip), 3, 300, next::run))
+                            .then(() -> {
+                                if (mergeResult != null) { // May be assigned to null in handleOnBackPressed().
+                                    resultOK(mergeResult); // onNoMRZPageReceived
+                                }
+                            })
+                            .start();
+                });
+            }
         });
+
     }
 
     private void configCVR() throws CaptureVisionRouterException {
-        mRouter.setInput(mCamera);
+        mScanner.setInput(mCamera);
 
         if (configuration.getTemplateFile() != null && !configuration.getTemplateFile().isEmpty()) {
             String template = configuration.getTemplateFile();
             mCurrentTemplate = "";
             if (template.startsWith("{") || template.startsWith("[")) {
-                mRouter.initSettings(template);
+                mScanner.initSettings(template);
             } else {
-                mRouter.initSettingsFromFile(template);
+                mScanner.initSettingsFromFile(template);
             }
         } else {
             if (configuration.getDocumentType() != null) {
@@ -211,6 +410,15 @@ public class MRZScannerActivity extends AppCompatActivity {
 
             }
         }
+
+        try {
+            SimplifiedCaptureVisionSettings settings = mScanner.getSimplifiedSettings(mCurrentTemplate);
+            if (settings.documentSettings != null) {
+                settings.documentSettings.minQuadrilateralAreaRatio = configuration.getMinDocumentAreaRatio();
+                mScanner.updateSettings(mCurrentTemplate, settings);
+            }
+        } catch (CaptureVisionRouterException ignore) {
+        }
     }
 
 
@@ -219,29 +427,18 @@ public class MRZScannerActivity extends AppCompatActivity {
         super.onResume();
         if (exceptionWhenConfigCvr != null) {
             resultError(exceptionWhenConfigCvr.getErrorCode(), exceptionWhenConfigCvr.getMessage());
-            finish();
             return;
         }
 
         mCamera.open();
-        // Start capturing.
-        // The template name is a string specified in the template file.
-        // In this sample we can use "ReadPassportAndId", "ReadId" and "ReadPassport".
-        // Here the template name is what the user selected on the UI.
-        // The completion listener is implemented below. It calls back when the capturing is successful or failed.
-        mRouter.startCapturing(mCurrentTemplate, new CompletionListener() {
+        mScanner.startCapturing(mCurrentTemplate, new CompletionListener() {
             @Override
             public void onSuccess() {
             }
 
-            // If failed, it shows an error message that describes the reasons.
-            // License error can be one of the reason of a failure. Besure that you have a valid license when starting capturing.
             @Override
             public void onFailure(int errorCode, String errorString) {
-                runOnUiThread(() -> {
-                    resultError(errorCode, errorString);
-                    finish();
-                });
+                runOnUiThread(() -> resultError(errorCode, errorString));
             }
         });
     }
@@ -249,90 +446,62 @@ public class MRZScannerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        succeed = false;
         mCamera.close();
-        mRouter.stopCapturing();
-    }
+        mScanner.stopCapturing();
 
-    @Override
-    protected void onStop() {
         // DrawingItem in this sample is the green quadrilateral that highlights the recognized text.
         // Clear the DrawingItem before you leave the camera page.
         mCameraView.getDrawingLayer(DrawingLayer.DLR_LAYER_ID).clearDrawingItems();
-        super.onStop();
     }
+
 
     @Override
-    public void onBackPressed() {
-        resultOK(MRZScanResult.EnumResultStatus.RS_CANCELED, null);
-        super.onBackPressed();
+    protected void onDestroy() {
+        super.onDestroy();
+        mCamera.setZoomFactorChangeListener(null);
     }
 
-    private void onParsedResultReceived(ParsedResult result) {
-        // If failed to parse the MRZ, the following code shows the recognized text on the view.
-        if (result.getItems().length != 0) {
-            if (formerFilter(result.getItems()[0])) {
-                if (configuration.isBeepEnabled()) {
-                    Feedback.beep();
-                }
-                if (configuration.isVibrateEnabled()) {
-                    Feedback.vibrate();
-                }
-                succeed = true;
-                resultOK(MRZScanResult.EnumResultStatus.RS_FINISHED, result.getItems()[0]);
-                finish();
-            }
-        }
-    }
-
-    private boolean formerFilter(ParsedResultItem item) {
-        HashMap<String, String> entry = item.getParsedFields();
-
-        number = entry.get("passportNumber") == null ? entry.get("documentNumber") == null
-                ? entry.get("longDocumentNumber") == null ? "" : entry.get("longDocumentNumber") :
-                entry.get("documentNumber") : entry.get("passportNumber");
-
-        return number != null &&
-                entry.get("sex") != null &&
-                entry.get("issuingState") != null &&
-                entry.get("nationality") != null &&
-                entry.get("dateOfBirth") != null &&
-                entry.get("dateOfExpiry") != null && getValid(item);
-    }
-
-    private void resultOK(int statusCode, ParsedResultItem item) {
+    private void resultOK(@NonNull MRZScanResult scanResult) {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_STATUS_CODE, statusCode);
-        if (item != null) {
-            intent.putExtra(EXTRA_DOC_TYPE, item.getCodeType());
-            intent.putExtra(EXTRA_NATIONALITY, item.getFieldRawValue("nationality"));
-            intent.putExtra(EXTRA_ISSUING_STATE, item.getFieldRawValue("issuingState"));
-            intent.putExtra(EXTRA_NUMBER, number);
-            intent.putExtra(EXTRA_RESULT, item.getParsedFields());
-        }
+        intent.putExtra(MRZScanResult.EXTRA, scanResult);
         setResult(RESULT_OK, intent);
-    }
-
-    private boolean getValid(ParsedResultItem item) {
-        boolean isValid;
-        if (item.getCodeType().equals("MRTD_TD1_ID")) {
-            isValid = item.getFieldValidationStatus("line1") != EnumValidationStatus.VS_FAILED
-                    && item.getFieldValidationStatus("line2") != EnumValidationStatus.VS_FAILED
-                    && item.getFieldValidationStatus("line3") != EnumValidationStatus.VS_FAILED;
-        } else {
-            isValid = item.getFieldValidationStatus("line1") != EnumValidationStatus.VS_FAILED
-                    && item.getFieldValidationStatus("line2") != EnumValidationStatus.VS_FAILED;
-        }
-        return isValid;
+        mergeResult = null; // Help GC to recycle the result in MRZScannerActivity, especially the image instances.
+        finish();
     }
 
     private void resultError(int errorCode, String errorString) {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_STATUS_CODE, MRZScanResult.EnumResultStatus.RS_EXCEPTION);
-        intent.putExtra(EXTRA_ERROR_CODE, errorCode);
-        intent.putExtra(EXTRA_ERROR_STRING, errorString);
+        MRZScanResult scanResult = new MRZScanResult();
+        scanResult.resultStatus = MRZScanResult.EnumResultStatus.RS_EXCEPTION;
+        scanResult.errorCode = errorCode;
+        scanResult.errorString = errorString;
+        intent.putExtra(MRZScanResult.EXTRA, scanResult);
         setResult(RESULT_OK, intent);
+        finish();
     }
+
+    private void resultCanceled() {
+        Intent intent = new Intent();
+        MRZScanResult scanResult = new MRZScanResult();
+        scanResult.resultStatus = MRZScanResult.EnumResultStatus.RS_CANCELED;
+        intent.putExtra(MRZScanResult.EXTRA, scanResult);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private static void makeFeedback(MRZScannerConfig config) {
+        if (config.isVibrateEnabled()) {
+            Feedback.vibrate();
+        }
+        if (config.isBeepEnabled()) {
+            Feedback.beep();
+        }
+    }
+
+    static native long nativeGetWrapImageDataInstance(IntermediateResultManager irManager, String imageHashId);
+
+    static native long nativeGetDeskewedWrapImageDataInstance(IntermediateResultManager irManager, String imageHashId, int[] points);
+
 
     public static final class ResultContract extends ActivityResultContract<MRZScannerConfig, MRZScanResult> {
 
@@ -340,13 +509,20 @@ public class MRZScannerActivity extends AppCompatActivity {
         @Override
         public Intent createIntent(@NonNull Context context, MRZScannerConfig mrzScannerConfig) {
             Intent intent = new Intent(context, MRZScannerActivity.class);
-            intent.putExtra(MRZScannerActivity.EXTRA_SCANNER_CONFIG, mrzScannerConfig);
+            intent.putExtra(EXTRA_SCANNER_CONFIG, mrzScannerConfig);
             return intent;
         }
 
         @Override
         public MRZScanResult parseResult(int resultCode, @Nullable Intent intent) {
-            return new MRZScanResult(resultCode, intent);
+            if (intent == null) {
+                MRZScanResult scanResult = new MRZScanResult();
+                scanResult.resultStatus = MRZScanResult.EnumResultStatus.RS_CANCELED;
+                return scanResult;
+            } else {
+                MRZScanResult serializableExtra = (MRZScanResult) intent.getParcelableExtra(MRZScanResult.EXTRA);
+                return serializableExtra;
+            }
         }
     }
 }

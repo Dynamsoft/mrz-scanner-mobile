@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="guide_frame_text"><![CDATA[ABC123<<<<<<<<<<<<<<<<<<<<<\nABC123<<<<<<<<<<<<<<<<<<<<<]]></string>
+
+    <string name="tip1"><font color="#FFFFFF">Scan the MRZ side first</font></string>
+    <string name="tip2">MRZ scanned ✓\nPortrait scanned ✓</string>
+    <string name="tip2_1">MRZ scanned ✓\n
+        <font color="#FFFFFF">Flip and scan the other side</font>
+    </string>
+    <string name="tip2_2">MRZ scanned ✓</string>
+    <string name="tip3">MRZ scanned ✓\nBoth sides scanned ✓</string>
+
+    <string name="tip4">MRZ scanned ✓\n
+        <font color="#FFFFFF">Finding portrait</font>
+    </string>
+    <string name="tip4_1">MRZ scanned ✓\n
+        <font color="#FFFFFF">Finding portrait.</font>
+    </string>
+    <string name="tip4_2">MRZ scanned ✓\n
+        <font color="#FFFFFF">Finding portrait..</font>
+    </string>
+    <string name="tip4_3">MRZ scanned ✓\n
+        <font color="#FFFFFF">Finding portrait...</font>
+    </string>
+
+
+    <string name="tip5">MRZ scanned ✓\n
+        <font color="#FFFFFF">No portrait detected</font>
+    </string>
+</resources>
