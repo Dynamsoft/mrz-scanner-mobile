@@ -28,8 +28,7 @@
 		6859ADB82E7AB92600D35402 /* Models in Resources */ = {isa = PBXBuildFile; fileRef = 6859ADB72E7AB92600D35402 /* Models */; };
 		6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */ = {isa = PBXBuildFile; fileRef = 6866C8F12DAE3154004ECCDA /* mrz-mobile.json */; };
 		68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */; };
-		68AAA8CF2F552363008FAD69 /* ExtensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AAA8CE2F552363008FAD69 /* ExtensionView.swift */; };
-		68AAA8D12F552375008FAD69 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AAA8D02F552375008FAD69 /* Media.xcassets */; };
+		68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */; };
 		68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */; };
 		68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */; };
 		68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF52D01794200E125F8 /* MRZScanResult.swift */; };
@@ -41,8 +40,7 @@
 		6859ADB72E7AB92600D35402 /* Models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Models; sourceTree = "<group>"; };
 		6866C8F12DAE3154004ECCDA /* mrz-mobile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "mrz-mobile.json"; sourceTree = "<group>"; };
 		68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		68AAA8CE2F552363008FAD69 /* ExtensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionView.swift; sourceTree = "<group>"; };
-		68AAA8D02F552375008FAD69 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
 		68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerConfig.swift; sourceTree = "<group>"; };
 		68CFBAF52D01794200E125F8 /* MRZScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScanResult.swift; sourceTree = "<group>"; };
@@ -86,8 +84,7 @@
 				68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */,
 				68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */,
 				68CFBAF52D01794200E125F8 /* MRZScanResult.swift */,
-				68AAA8CE2F552363008FAD69 /* ExtensionView.swift */,
-				68AAA8D02F552375008FAD69 /* Media.xcassets */,
+				68AB7CEC2D02D0E8009D60B8 /* Media.xcassets */,
 				6866C8F12DAE3154004ECCDA /* mrz-mobile.json */,
 			);
 			path = DynamsoftMRZScannerBundle;
@@ -177,7 +174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				68AAA8D12F552375008FAD69 /* Media.xcassets in Resources */,
+				68AB7CED2D02D0E8009D60B8 /* Media.xcassets in Resources */,
 				6866C8F22DAE3154004ECCDA /* mrz-mobile.json in Resources */,
 				6859ADB82E7AB92600D35402 /* Models in Resources */,
 				68A037402E4DB0B400277601 /* PrivacyInfo.xcprivacy in Resources */,
@@ -213,7 +210,6 @@
 			files = (
 				68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */,
 				68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */,
-				68AAA8CF2F552363008FAD69 /* ExtensionView.swift in Sources */,
 				68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -367,7 +363,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.1200;
+				MARKETING_VERSION = 3.2.5000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -401,7 +397,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.1200;
+				MARKETING_VERSION = 3.2.5000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -472,7 +468,7 @@
 			repositoryURL = "https://github.com/Dynamsoft/capture-vision-spm";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.4.1000;
+				minimumVersion = 3.2.1000;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

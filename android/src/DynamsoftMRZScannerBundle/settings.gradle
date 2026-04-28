@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DynamsoftMRZScannerBundle"
+rootProject.name = "DynamsoftMRZScanner"
 include ':dynamsoftmrzscannerbundle'
-include ':mrzbundlejni'
