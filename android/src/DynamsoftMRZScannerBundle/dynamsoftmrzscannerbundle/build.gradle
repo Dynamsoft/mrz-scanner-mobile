@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-    releaseVersion = "3.2.5000"
+    releaseVersion = "3.4.1200"
     productName = "MRZScannerBundle"
 }
 
@@ -15,14 +15,11 @@ if (localPublishFileExists) {
 
 android {
     namespace 'com.dynamsoft.mrzscannerbundle'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
-        archivesBaseName = "${project.ext.productName}-${project.ext.releaseVersion}"
+        targetSdk 36
     }
 
     buildTypes {
@@ -31,14 +28,29 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
+    buildFeatures {
+        buildConfig true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    libraryVariants.configureEach { variant ->
+        variant.outputs.all { output ->
+            outputFileName = "${project.ext.productName}-${project.ext.releaseVersion}-${variant.name}.aar"
+        }
+    }
+
 }
 
 dependencies {
-    api "com.dynamsoft:capturevisionbundle:3.2.5000"
+    api "com.dynamsoft:capturevisionbundle:3.4.1200"
 
     api 'androidx.appcompat:appcompat:1.6.1'
+    api "androidx.constraintlayout:constraintlayout:2.1.4"
 }

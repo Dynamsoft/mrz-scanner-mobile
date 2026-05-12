@@ -8,19 +8,25 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dynamsoft</groupId>
   <artifactId>mrzscannerbundle</artifactId>
-  <version>3.2.5000</version>
+  <version>3.4.1200</version>
   <packaging>aar</packaging>
   <dependencies>
     <dependency>
       <groupId>com.dynamsoft</groupId>
       <artifactId>capturevisionbundle</artifactId>
-      <version>3.2.5000</version>
+      <version>3.4.1200</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>androidx.appcompat</groupId>
       <artifactId>appcompat</artifactId>
       <version>1.6.1</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>androidx.constraintlayout</groupId>
+      <artifactId>constraintlayout</artifactId>
+      <version>2.1.4</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

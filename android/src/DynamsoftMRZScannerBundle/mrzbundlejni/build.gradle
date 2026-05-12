@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.dynamsoft.mrzbundlejni'
+    compileSdk 36
+
+    defaultConfig {
+        minSdk 21
+        consumerProguardFiles "consumer-rules.pro"
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+    ndkVersion '27.2.12479018'
+}
+
+tasks.register("buildAndCopyNativeLibsRelease", Copy) {
+    dependsOn("clean")
+    dependsOn("externalNativeBuildRelease")
+    def soDir = file("${buildDir}/intermediates/cmake/release/obj")
+    def targetDir = file("${rootDir}/dynamsoftmrzscannerbundle/src/main/jniLibs")
+    from(soDir) {
+        include("**/libDynamsoftMRZScannerBundleJni.so")
+    }
+    into(targetDir)
+    println("targetDir: $targetDir")
+}
+
+dependencies {
+}

@@ -3,27 +3,35 @@ package com.dynamsoft.mrzscannerbundle.ui;
 import static com.dynamsoft.mrzscannerbundle.ui.MRZScanResult.EnumResultStatus.RS_CANCELED;
 import static com.dynamsoft.mrzscannerbundle.ui.MRZScanResult.EnumResultStatus.RS_EXCEPTION;
 import static com.dynamsoft.mrzscannerbundle.ui.MRZScanResult.EnumResultStatus.RS_FINISHED;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_DOC_TYPE;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_ERROR_CODE;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_ERROR_STRING;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_ISSUING_STATE;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_NATIONALITY;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_NUMBER;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_RESULT;
-import static com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity.EXTRA_STATUS_CODE;
 
-import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 
-import java.util.Calendar;
-import java.util.HashMap;
-public final class MRZScanResult {
+import com.dynamsoft.core.basic_structures.ImageData;
+
+public final class MRZScanResult implements Parcelable {
+    final static String EXTRA = "MRZScanResult";
+
     @EnumResultStatus
-    private int resultStatus;
-    private int errorCode;
-    private String errorString;
-    private MRZData mrzData;
+    int resultStatus;
+    int errorCode;
+    String errorString;
+    MRZData mrzData;
+    long mrzPageOriginalImageInstance;
+    long mrzPageDocumentImageInstance;
+    long anotherPageOriginalImageInstance;
+    long anotherPageDocumentImageInstance;
+    long portraitImageInstance;
+    transient ImageData primaryOriginalImage;
+    transient ImageData primaryDocumentImage;
+    transient ImageData secondaryOriginalImage;
+    transient ImageData secondaryDocumentImage;
+    transient ImageData portraitImage;
+
 
     @IntDef(value = {RS_FINISHED, RS_CANCELED, RS_EXCEPTION})
     public @interface EnumResultStatus {
@@ -32,14 +40,53 @@ public final class MRZScanResult {
         int RS_EXCEPTION = 2;
     }
 
-    public MRZScanResult(int resultCode, Intent data) {
-        if (data != null) {
-            resultStatus = data.getIntExtra(EXTRA_STATUS_CODE, 0);
-            errorCode = data.getIntExtra(EXTRA_ERROR_CODE, 0);
-            errorString = data.getStringExtra(EXTRA_ERROR_STRING);
-            mrzData = intentToMRZData(data);
-        }
+    public MRZScanResult() {
     }
+
+    private MRZScanResult(Parcel in) {
+        resultStatus = in.readInt();
+        errorCode = in.readInt();
+        errorString = in.readString();
+        mrzData = (MRZData) in.readSerializable();
+        mrzPageOriginalImageInstance = in.readLong();
+        mrzPageDocumentImageInstance = in.readLong();
+        anotherPageOriginalImageInstance = in.readLong();
+        anotherPageDocumentImageInstance = in.readLong();
+        portraitImageInstance = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(resultStatus);
+        dest.writeInt(errorCode);
+        dest.writeString(errorString);
+        dest.writeSerializable(mrzData);
+        dest.writeLong(mrzPageOriginalImageInstance);
+        dest.writeLong(mrzPageDocumentImageInstance);
+        dest.writeLong(anotherPageOriginalImageInstance);
+        dest.writeLong(anotherPageDocumentImageInstance);
+        dest.writeLong(portraitImageInstance);
+
+        retainAllImageInstances();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<MRZScanResult> CREATOR = new Creator<>() {
+        @Override
+        public MRZScanResult createFromParcel(Parcel in) {
+            return new MRZScanResult(in);
+        }
+
+        @Override
+        public MRZScanResult[] newArray(int size) {
+            return new MRZScanResult[size];
+        }
+    };
+
 
     public MRZData getData() {
         return mrzData;
@@ -58,59 +105,135 @@ public final class MRZScanResult {
         return errorString;
     }
 
-    private MRZData intentToMRZData(Intent intent) {
-        String docType = intent.getStringExtra(EXTRA_DOC_TYPE);
-        String nationality = intent.getStringExtra(EXTRA_NATIONALITY);
-        String issuingState = intent.getStringExtra(EXTRA_ISSUING_STATE);
-        String documentNumber = intent.getStringExtra(EXTRA_NUMBER);
+    @Nullable
+    public ImageData getDocumentImage(EnumDocumentSide documentSide) {
+        if(documentSide == EnumDocumentSide.DS_MRZ) {
+            return getPrimaryDocumentImage();
+        } else {
+            return getSecondaryDocumentImage();
+        }
+    }
 
-        HashMap<String, String> map = (HashMap<String, String>) intent.getSerializableExtra(EXTRA_RESULT);
-        if (map == null) {
+    @Nullable
+    public ImageData getOriginalImage(EnumDocumentSide documentSide) {
+        if(documentSide == EnumDocumentSide.DS_MRZ) {
+            return getPrimaryOriginalImage();
+        } else {
+            return getSecondaryOriginalImage();
+        }
+    }
+
+    @Nullable
+    private ImageData getPrimaryOriginalImage() {
+        if (mrzPageOriginalImageInstance == 0) {
             return null;
         }
-
-        String firstName = map.get("secondaryIdentifier") == null ? "" : map.get("secondaryIdentifier");
-        String lastName = map.get("primaryIdentifier") == null ? "" : " " + map.get("primaryIdentifier");
-        String sex = map.get("sex");
-
-        String dateOfExpire = (Integer.parseInt(map.get("expiryYear")) + 2000) + "-" + map.get("expiryMonth") + "-" + map.get("expiryDay");
-
-        Calendar calendar = Calendar.getInstance();
-        int currentYear = calendar.get(Calendar.YEAR);
-        int currentMonth = calendar.get(Calendar.MONTH) + 1;
-        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-
-        int birthYear = 0, birthMonth = 0, birthDay = 0;
-        try {
-            birthYear = Integer.parseInt(map.get("birthYear"));
-        } catch (Exception ignore) {
+        if (primaryOriginalImage == null) {
+            primaryOriginalImage = nativeGetImageData(mrzPageOriginalImageInstance);
         }
-        try {
-            birthMonth = Integer.parseInt(map.get("birthMonth"));
-        } catch (Exception ignore) {
-        }
-        try {
-            birthDay = Integer.parseInt(map.get("birthDay"));
-        } catch (Exception ignore) {
-        }
-
-        // Age information is not directly obtained from the MRZ but you can calculate it based on the date of birth.
-        birthYear += 1900;
-        int birthNumber = birthYear * 10000 + birthMonth * 100 + birthDay;
-        int currentDayNumber = currentYear * 10000 + currentMonth * 100 + currentDay;
-        int age = (currentDayNumber - birthNumber) / 10000;
-        if (age >= 100) {
-            age -= 100;
-            birthYear += 100;
-        }
-        String dateOfBirth = birthYear + "-" + map.get("birthMonth") + "-" + map.get("birthDay");
-
-        String line1 = map.get("line1") == null ? "" : map.get("line1");
-        String line2 = map.get("line2") == null ? "" : map.get("line2");
-        String line3 = map.get("line3") == null ? "" : map.get("line3");
-        String mrzText = (line1 + "\n" + line2 + "\n" + line3).trim();
-
-        return new MRZData(firstName, lastName, sex, issuingState, nationality, dateOfBirth, dateOfExpire,
-                documentNumber, age, mrzText, docType);
+        return primaryOriginalImage;
     }
+
+    @Nullable
+    private ImageData getPrimaryDocumentImage() {
+        if (mrzPageDocumentImageInstance == 0) {
+            return null;
+        }
+        if (primaryDocumentImage == null) {
+            primaryDocumentImage = nativeGetImageData(mrzPageDocumentImageInstance);
+        }
+        return primaryDocumentImage;
+    }
+
+    @Nullable
+    private ImageData getSecondaryOriginalImage() {
+        if (anotherPageOriginalImageInstance == 0) {
+            return null;
+        }
+        if (secondaryOriginalImage == null) {
+            secondaryOriginalImage = nativeGetImageData(anotherPageOriginalImageInstance);
+        }
+        return secondaryOriginalImage;
+    }
+
+    @Nullable
+    private ImageData getSecondaryDocumentImage() {
+        if (anotherPageDocumentImageInstance == 0) {
+            return null;
+        }
+        if (secondaryDocumentImage == null) {
+            secondaryDocumentImage = nativeGetImageData(anotherPageDocumentImageInstance);
+        }
+        return secondaryDocumentImage;
+    }
+
+    @Nullable
+    public ImageData getPortraitImage() {
+        if (portraitImageInstance == 0) {
+            return null;
+        }
+        if (portraitImage == null) {
+            portraitImage = nativeGetImageData(portraitImageInstance);
+        }
+        return portraitImage;
+    }
+
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public long _getImageInstance(int type) {
+        switch (type) {
+            case 0:
+                return mrzPageOriginalImageInstance;
+            case 1:
+                return mrzPageDocumentImageInstance;
+            case 2:
+                return anotherPageOriginalImageInstance;
+            case 3:
+                return anotherPageDocumentImageInstance;
+            case 4:
+                return portraitImageInstance;
+            default:
+                return 0;
+        }
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public void retainAllImageInstances() {
+        nativeRetainImageData(mrzPageOriginalImageInstance);
+        nativeRetainImageData(mrzPageDocumentImageInstance);
+        nativeRetainImageData(portraitImageInstance);
+        nativeRetainImageData(anotherPageOriginalImageInstance);
+        nativeRetainImageData(anotherPageDocumentImageInstance);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (mrzPageOriginalImageInstance != 0) {
+            nativeReleaseImageData(mrzPageOriginalImageInstance);
+            mrzPageOriginalImageInstance = 0;
+        }
+        if (mrzPageDocumentImageInstance != 0) {
+            nativeReleaseImageData(mrzPageDocumentImageInstance);
+            mrzPageDocumentImageInstance = 0;
+        }
+        if (portraitImageInstance != 0) {
+            nativeReleaseImageData(portraitImageInstance);
+            portraitImageInstance = 0;
+        }
+        if (anotherPageOriginalImageInstance != 0) {
+            nativeReleaseImageData(anotherPageOriginalImageInstance);
+            anotherPageOriginalImageInstance = 0;
+        }
+        if (anotherPageDocumentImageInstance != 0) {
+            nativeReleaseImageData(anotherPageDocumentImageInstance);
+            anotherPageDocumentImageInstance = 0;
+        }
+    }
+
+    static native ImageData nativeGetImageData(long instance);
+
+    static native void nativeRetainImageData(long instance);
+
+    static native void nativeReleaseImageData(long instance);
 }
