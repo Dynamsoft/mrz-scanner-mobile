@@ -2,7 +2,7 @@
 
 This repository hosts the **Dynamsoft MRZ Scanner** — a ready-to-use scanning component for native mobile apps. With minimal setup, you can drop the built-in scanner UI (`MRZScannerActivity` on Android, `MRZScannerViewController` on iOS) into your app to read the Machine Readable Zone (MRZ) on passports and ID cards and extract the holder's information.
 
-This repo contains runnable samples for each platform that demonstrate launching the scanner, handling results, and displaying the extracted data — from a minimal single-screen app up to a complete **`ScanMRZ`** app. It also ships the full source of the scanner bundle itself, under [`android/src`](android/src) and [`ios/src`](ios/src), for apps that need to customize the scanner's internals.
+This repo contains runnable samples for each platform that demonstrate launching the scanner, handling results, and displaying the extracted data — from a minimal single-screen app up to a complete **`ScanMRZ`** app.
 
 ## Supported Document Types
 
@@ -43,7 +43,7 @@ The requirements above are what the **SDK** needs when you add it to your own ap
 
 ## Add the SDK
 
-The recommended way to add `DynamsoftMRZScannerBundle` to your app is via the platform's standard package manager — you do **not** need to build the source in this repository. Use the bundle source under [`android/src`](android/src) / [`ios/src`](ios/src) only if you intend to customize the scanner's internals (see [Further Customization](#further-customization)).
+The recommended way to add `DynamsoftMRZScannerBundle` to your app is via the platform's standard package manager, which ships the bundle as a precompiled binary. Building it yourself is only necessary if you intend to customize the scanner's internals (see [Further Customization](#further-customization)).
 
 ### Android — Maven (recommended)
 
@@ -127,16 +127,12 @@ A valid license key is required to use the SDK. You can request a free 30-day tr
 
 ## Further Customization
 
-The package-manager integrations above ship the bundle as a precompiled binary, which is the right choice for the vast majority of apps. If you need to modify the scanner internals — for example to change the built-in UI flow beyond what `MRZScannerConfig` exposes — the full source of `DynamsoftMRZScannerBundle` is included in this repository:
+The package-manager integrations above ship the bundle as a precompiled binary, which is the right choice for the vast majority of apps. If you need behavior that `MRZScannerConfig` cannot express — for example changing the built-in UI flow — you can build `DynamsoftMRZScannerBundle` from source instead:
 
-| | Source | Getting started |
-| --- | --- | --- |
-| Android | [`android/src`](android/src) — Gradle project with the `dynamsoftmrzscannerbundle` module and its `mrzbundlejni` JNI layer | [android/src/README.md](android/src/README.md) |
-| iOS | [`ios/src`](ios/src) — Xcode project plus the Core ML models it bundles | [ios/src/README.md](ios/src/README.md) |
+- **Android** — [Building from Source](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/android/user-guide/build-from-source.html)
+- **iOS** — [Building from Source](https://www.dynamsoft.com/mrz-scanner/docs/mobile/programming/ios/user-guide/build-from-source.html)
 
-Building from source **replaces** the package-manager dependency: drop the Maven / SPM / CocoaPods entry for `DynamsoftMRZScannerBundle` before linking the local project, and keep the `capturevisionbundle` dependency that the source declares. The samples in this repository are wired to the released binary rather than to these folders, so they keep building unchanged either way.
-
-If you are unsure whether source-level customization is the right path for your app, reach out to the [Dynamsoft Support Team](https://www.dynamsoft.com/company/contact/).
+Building from source replaces the package-manager dependency, and your changes have to be re-applied on each SDK release, so treat it as a last resort. If you are unsure whether it is the right path for your app, reach out to the [Dynamsoft Support Team](https://www.dynamsoft.com/company/contact/).
 
 ## Contact Us
 
