@@ -4,18 +4,22 @@ import com.dynamsoft.dce.EnumCameraPosition;
 import com.dynamsoft.utility.CrossVerificationCriteria;
 
 import java.io.Serializable;
+
 public class MRZScannerConfig implements Serializable {
-	private String license;
-	private boolean isTorchButtonVisible = true;
+    private static final long serialVersionUID = 1L; // Never change: saved-state configs from older builds must still read.
+    private String license;
+    private String templateFile;
+    private EnumDocumentType documentType = EnumDocumentType.DT_ALL;
+    private boolean isTorchButtonVisible = true;
     private boolean isFormatSelectorVisible = true;
-	private boolean isBeepEnabled;
+    private boolean isBeepEnabled;
     private boolean isBeepButtonVisible = true;
-	private boolean isVibrateEnabled;
+    private boolean isVibrateEnabled;
     private boolean isVibrateButtonVisible = true;
-	private boolean isCloseButtonVisible = true;
-	private EnumDocumentType documentType = EnumDocumentType.DT_ALL;
-	private boolean guideFrameVisible = true;
-	private boolean isCameraToggleButtonVisible = true;
+    private boolean isCloseButtonVisible = true;
+    private boolean guideFrameVisible = true;
+    private boolean isCameraToggleButtonVisible = true;
+    private boolean cameraPermissionPromptEnabled = true;
     private boolean returnOriginalImage = false;
     private boolean returnDocumentImage = true;
     private boolean returnPortraitImage = true;
@@ -23,162 +27,92 @@ public class MRZScannerConfig implements Serializable {
     private int minConsistentFrames = 2;
     private int minDocumentAreaRatio = 2;
 
-	int cameraPosition = EnumCameraPosition.CP_BACK;
+    int cameraPosition = EnumCameraPosition.CP_BACK;
+    float zoomFactor = 1f;
 
-	private String templateFile;
+    public String getLicense() { return license; }
 
-	float zoomFactor = 1f;
+    public void setLicense(String license) { this.license = license; }
 
-	public boolean isCloseButtonVisible() {
-		return isCloseButtonVisible;
-	}
+    public String getTemplateFile() { return templateFile; }
 
-	public void setCloseButtonVisible(boolean closeButtonVisible) {
-		isCloseButtonVisible = closeButtonVisible;
-	}
+    public void setTemplateFile(String templateFile) { this.templateFile = templateFile; }
 
-	public boolean isBeepEnabled() {
-		return isBeepEnabled;
-	}
+    public EnumDocumentType getDocumentType() { return documentType; }
 
-	public void setBeepEnabled(boolean beepEnabled) {
-		isBeepEnabled = beepEnabled;
-	}
+    public void setDocumentType(EnumDocumentType documentType) { this.documentType = documentType; }
 
-	public boolean isVibrateEnabled() {
-		return isVibrateEnabled;
-	}
+    public boolean isCloseButtonVisible() { return isCloseButtonVisible; }
 
-	public void setVibrateEnabled(boolean vibrateEnabled) {
-		isVibrateEnabled = vibrateEnabled;
-	}
+    public void setCloseButtonVisible(boolean closeButtonVisible) { isCloseButtonVisible = closeButtonVisible; }
 
-	public boolean isTorchButtonVisible() {
-		return isTorchButtonVisible;
-	}
+    public boolean isBeepEnabled() { return isBeepEnabled; }
 
-	public void setTorchButtonVisible(boolean torchButtonVisible) {
-		isTorchButtonVisible = torchButtonVisible;
-	}
+    public void setBeepEnabled(boolean beepEnabled) { isBeepEnabled = beepEnabled; }
 
-	public String getLicense() {
-		return license;
-	}
+    public boolean isVibrateEnabled() { return isVibrateEnabled; }
 
-	public void setLicense(String license) {
-		this.license = license;
-	}
+    public void setVibrateEnabled(boolean vibrateEnabled) { isVibrateEnabled = vibrateEnabled; }
 
-	public EnumDocumentType getDocumentType() {
-		return documentType;
-	}
+    public boolean isTorchButtonVisible() { return isTorchButtonVisible; }
 
-	public void setDocumentType(EnumDocumentType documentType) {
-		this.documentType = documentType;
-	}
+    public void setTorchButtonVisible(boolean torchButtonVisible) { isTorchButtonVisible = torchButtonVisible; }
 
-	public boolean isGuideFrameVisible() {
-		return guideFrameVisible;
-	}
+    public boolean isGuideFrameVisible() { return guideFrameVisible; }
 
-	public void setGuideFrameVisible(boolean guideFrameVisible) {
-		this.guideFrameVisible = guideFrameVisible;
-	}
+    public void setGuideFrameVisible(boolean guideFrameVisible) { this.guideFrameVisible = guideFrameVisible; }
 
-	public String getTemplateFile() {
-		return templateFile;
-	}
+    public boolean isCameraToggleButtonVisible() { return isCameraToggleButtonVisible; }
 
-	public void setTemplateFile(String templateFile) {
-		this.templateFile = templateFile;
-	}
+    public void setCameraToggleButtonVisible(boolean cameraToggleButtonVisible) { isCameraToggleButtonVisible = cameraToggleButtonVisible; }
 
-	public boolean isCameraToggleButtonVisible() {
-		return isCameraToggleButtonVisible;
-	}
+    // --- Added in 3.4.1000 ---
 
-	public void setCameraToggleButtonVisible(boolean cameraToggleButtonVisible) {
-		isCameraToggleButtonVisible = cameraToggleButtonVisible;
-	}
+    public boolean isReturnDocumentImage() { return returnDocumentImage; }
 
-    //Newly Added in 3.4.1000
-    public boolean isReturnDocumentImage() {
-        return returnDocumentImage;
-    }
+    public void setReturnDocumentImage(boolean returnDocumentImage) { this.returnDocumentImage = returnDocumentImage; }
 
-    //Newly Added in 3.4.1000
-    public void setReturnDocumentImage(boolean returnDocumentImage) {
-        this.returnDocumentImage = returnDocumentImage;
-    }
+    public boolean isReturnOriginalImage() { return returnOriginalImage; }
 
-    //Newly Added in 3.4.1000
-    public boolean isReturnOriginalImage() {
-        return returnOriginalImage;
-    }
+    public void setReturnOriginalImage(boolean returnOriginalImage) { this.returnOriginalImage = returnOriginalImage; }
 
-    //Newly Added in 3.4.1000
-    public void setReturnOriginalImage(boolean returnOriginalImage) {
-        this.returnOriginalImage = returnOriginalImage;
-    }
+    public boolean isReturnPortraitImage() { return returnPortraitImage; }
 
-    //Newly Added in 3.4.1000
-    public boolean isReturnPortraitImage() {
-        return returnPortraitImage;
-    }
+    public void setReturnPortraitImage(boolean returnPortraitImage) { this.returnPortraitImage = returnPortraitImage; }
 
-    //Newly Added in 3.4.1000
-    public void setReturnPortraitImage(boolean returnPortraitImage) {
-        this.returnPortraitImage = returnPortraitImage;
-    }
+    public boolean isBeepButtonVisible() { return isBeepButtonVisible; }
 
-    //Newly Added in 3.4.1000
-    public void setBeepButtonVisible(boolean isVisible) {
-        this.isBeepButtonVisible = isVisible;
-    }
+    public void setBeepButtonVisible(boolean isVisible) { this.isBeepButtonVisible = isVisible; }
 
-    //Newly Added in 3.4.1000
-    public boolean isBeepButtonVisible() {
-        return isBeepButtonVisible;
-    }
+    public boolean isVibrateButtonVisible() { return isVibrateButtonVisible; }
 
-    //Newly Added in 3.4.1000
-    public void setVibrateButtonVisible(boolean isVisible) {
-        this.isVibrateButtonVisible = isVisible;
-    }
+    public void setVibrateButtonVisible(boolean isVisible) { this.isVibrateButtonVisible = isVisible; }
 
-    //Newly Added in 3.4.1000
-    public boolean isVibrateButtonVisible() {
-        return isVibrateButtonVisible;
-    }
+    public boolean isFormatSelectorVisible() { return isFormatSelectorVisible; }
 
-    //Newly Added in 3.4.1000
-    public void setFormatSelectorVisible(boolean isVisible) {
-        this.isFormatSelectorVisible = isVisible;
-    }
+    public void setFormatSelectorVisible(boolean isVisible) { this.isFormatSelectorVisible = isVisible; }
 
-    //Newly Added in 3.4.1000
-    public boolean isFormatSelectorVisible() {
-        return isFormatSelectorVisible;
-    }
+    // --- Added in 3.6.2000 ---
 
-    //For Test
+    /**
+     * Whether a denied camera shows a dialog offering to grant or open Settings before reporting.
+     * Either way the denial arrives as {@link MRZScanResult.EnumErrorCode#EC_CAMERA_PERMISSION_DENIED}
+     * or {@link MRZScanResult.EnumErrorCode#EC_CAMERA_PERMISSION_RESTRICTED} and the camera never starts.
+     */
+    public boolean isCameraPermissionPromptEnabled() { return cameraPermissionPromptEnabled; }
+
+    public void setCameraPermissionPromptEnabled(boolean cameraPermissionPromptEnabled) { this.cameraPermissionPromptEnabled = cameraPermissionPromptEnabled; }
+
+    // --- Package-private tuning hooks, for tests ---
+
     void setCriteria(CrossVerificationCriteria criteria) {
         this.frameWindow = criteria.getFrameWindow();
         this.minConsistentFrames = criteria.getMinConsistentFrames();
     }
 
-    //For Test
-    CrossVerificationCriteria getCriteria() {
-        return new CrossVerificationCriteria(frameWindow, minConsistentFrames);
-    }
+    CrossVerificationCriteria getCriteria() { return new CrossVerificationCriteria(frameWindow, minConsistentFrames); }
 
-    //For Test
-    int getMinDocumentAreaRatio() {
-        return minDocumentAreaRatio;
-    }
+    int getMinDocumentAreaRatio() { return minDocumentAreaRatio; }
 
-    //For Test
-    void setMinDocumentAreaRatio(int minDocumentAreaRatio) {
-        this.minDocumentAreaRatio = minDocumentAreaRatio;
-    }
+    void setMinDocumentAreaRatio(int minDocumentAreaRatio) { this.minDocumentAreaRatio = minDocumentAreaRatio; }
 }

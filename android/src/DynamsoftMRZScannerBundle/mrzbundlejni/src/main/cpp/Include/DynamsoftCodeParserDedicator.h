@@ -34,11 +34,11 @@ int VerifyMRZ(const string& in, const string& verifyCode);
 int VerifyVIN(const string& in, const string& verifyCode);
 int VerifyLRC(const string& in, const string& verifyCode);
 int VerifyVDSNC(const string& in, const string& certificationPath);
-int VerifyVDSNC(const string& in, const unsigned char* cert, int cerLen);
+//int VerifyVDSNC(const string& in, const unsigned char* cert, int cerLen);
 int ConvertToString_AADHAAR_PVC(string& data, string& result);
 int ConvertToString_SOUTH_AFRICA_DL(const unsigned char* data, int length, string& result);
 int Test_SOUTH_AFRICA_DL(const unsigned char* data, int length, string& result);
-void VDSNC_verification_for_cercode(const char * source, int sourceLen, unsigned char * cert, int cerLen, int& ret);
+//void VDSNC_verification_for_cercode(const char * source, int sourceLen, unsigned char * cert, int cerLen, int& ret);
 
 int convertToString_GS1_Application_Identifier(const string& in, string& out);
 #ifdef __cplusplus
@@ -53,7 +53,7 @@ extern "C" {
 	DCPD_API void DCPD_MRZ_verification(const char * source, int sourceLen, const char * verifyCode, int verifyCodeLen, int& ret);
 	DCPD_API void DCPD_VIN_verification(const char * source, int sourceLen, const char * verifyCode, int verifyCodeLen, int& ret);
 	DCPD_API void DCPD_LRC_verification(const char * source, int sourceLen, const char * verifyCode, int verifyCodeLen, int& ret);
-	DCPD_API void DCPD_VDSNC_verification(const char * source, int sourceLen, const char * certificationPath, int certificationPathLen, int& ret);
+	//DCPD_API void DCPD_VDSNC_verification(const char * source, int sourceLen, const char * certificationPath, int certificationPathLen, int& ret);
 	DCPD_API void DCPD_AADHAAR_PVC_ConvertToString(const unsigned char * source, int sourceLen, char ** result, int& resultLen, int& ret);
 	DCPD_API void DCPD_SOUTH_AFRICA_DL_ConvertToString(const unsigned char * source, int sourceLen, char ** result, int& resultLen, int& ret);
 	DCPD_API void DCPD_SOUTH_AFRICA_DL_Test(const unsigned char * source, int sourceLen, char ** result, int& resultLen, int& ret);

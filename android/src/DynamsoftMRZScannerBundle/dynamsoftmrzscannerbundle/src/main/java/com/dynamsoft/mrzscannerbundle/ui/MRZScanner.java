@@ -62,78 +62,47 @@ class MRZScanner extends CaptureVisionRouter implements CapturedResultReceiver, 
             return;
         }
 
+        // Snapshot once: each unit is null until its first callback, and onPause clears them from the main thread.
+        ScaledColourImageUnit scaled = scaledColourImageUnit;
+        LocalizedTextLinesUnit localized = localizedTextLinesUnit;
+        RecognizedTextLinesUnit recognized = recognizedTextLinesUnit;
+        DetectedQuadsUnit quads = detectedQuadsUnit;
+        DeskewedImageUnit deskewed = deskewedImageUnit;
+
         Quadrilateral precisePhotoLocation = null;
-        if (returnPortraitImage) {
-            int highConfidencePortraitZoneIndex = -1;
-            if(localizedTextLinesUnit.getAuxiliaryRegionElementsCount() > 0) {
-                for(int i = 0; i < localizedTextLinesUnit.getAuxiliaryRegionElementsCount(); i++) {
-                    if(localizedTextLinesUnit.getAuxiliaryRegionElement(i).getName().equals("PortraitZone")) {
-                        if(localizedTextLinesUnit.getAuxiliaryRegionElement(i).getConfidence() > 60) {
-                            highConfidencePortraitZoneIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-            // If there is no high confidence portrait zone, we will not return portrait image,
-            // and we will not run the identity processor to find a less precise portrait zone.
-            int detectedQuadsCount = detectedQuadsUnit == null ? 0 : detectedQuadsUnit.getCount();
-            if (highConfidencePortraitZoneIndex != -1 && detectedQuadsCount > 0) {
-                precisePhotoLocation = idProcessor.findPortraitZone(scaledColourImageUnit, localizedTextLinesUnit,
-                        recognizedTextLinesUnit, detectedQuadsUnit, deskewedImageUnit);
-            } /*else {precisePhotoLocation = null}*/
+        if (returnPortraitImage && scaled != null && localized != null && recognized != null
+                && quads != null && deskewed != null && quads.getCount() > 0
+                // Without a high-confidence portrait zone we return no portrait at all.
+                && hasHighConfidencePortraitZone(localized)) {
+            precisePhotoLocation = idProcessor.findPortraitZone(scaled, localized, recognized, quads, deskewed);
         }
 
         if (returnPortraitImage && precisePhotoLocation != null && quadItem != null) {
-            Quadrilateral docRegion = quadItem.getLocation();
-            boolean isValid = docRegion.isPointInQuadrilateral(precisePhotoLocation.points[0])
-                    && docRegion.isPointInQuadrilateral(precisePhotoLocation.points[1])
-                    && docRegion.isPointInQuadrilateral(precisePhotoLocation.points[2])
-                    && docRegion.isPointInQuadrilateral(precisePhotoLocation.points[3])
-                    && docRegion.getArea() / precisePhotoLocation.getArea() >= 3;
-            if (!isValid) {
+            if (!isPortraitValid(precisePhotoLocation, quadItem.getLocation())) {
                 return;
             }
         }
 
-
         ParsedResult parsedResult = result.getParsedResult();
-        ParsedResultItem parsedResultItem = parsedResult == null ? null : parsedResult.getItems()[0];
+        ParsedResultItem[] items = parsedResult == null ? null : parsedResult.getItems();
+        // Guard the index, not just the result: an empty items array is possible here.
+        ParsedResultItem parsedResultItem = (items == null || items.length == 0) ? null : items[0];
         MRZData mrzData = MRZData.fromParsedResultItem(parsedResultItem);
 
         MRZScanResult scanResult = new MRZScanResult();
-        Log.e(TAG, "onCapturedResultReceived: "+scanResult);
         scanResult.mrzData = mrzData;
 
         if (returnOriginalImage) {
-            long originalInstance = MRZScannerActivity.nativeGetWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId());
-            if (mrzData != null) {
-                scanResult.mrzPageOriginalImageInstance = originalInstance;
-            } else {
-                scanResult.anotherPageOriginalImageInstance = originalInstance;
-            }
+            scanResult.imageInstances[mrzData != null ? MRZScanResult.TYPE_MRZ_ORIGINAL : MRZScanResult.TYPE_OTHER_ORIGINAL] =
+                    MRZScannerActivity.nativeGetWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId());
         }
         if (returnDocumentImage && quadItem != null) {
-            int[] points = new int[quadItem.getLocation().points.length * 2];
-            for (int i = 0; i < quadItem.getLocation().points.length; i++) {
-                points[i * 2] = quadItem.getLocation().points[i].x;
-                points[i * 2 + 1] = quadItem.getLocation().points[i].y;
-            }
-            long docInstance = MRZScannerActivity.nativeGetDeskewedWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId(), points);
-            if (mrzData != null) {
-                scanResult.mrzPageDocumentImageInstance = docInstance;
-            } else {
-                scanResult.anotherPageDocumentImageInstance = docInstance;
-            }
+            scanResult.imageInstances[mrzData != null ? MRZScanResult.TYPE_MRZ_DOCUMENT : MRZScanResult.TYPE_OTHER_DOCUMENT] =
+                    MRZScannerActivity.nativeGetDeskewedWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId(), flatten(quadItem.getLocation()));
         }
-
         if (returnPortraitImage && precisePhotoLocation != null) {
-            int[] points = new int[precisePhotoLocation.points.length * 2];
-            for (int i = 0; i < precisePhotoLocation.points.length; i++) {
-                points[i * 2] = precisePhotoLocation.points[i].x;
-                points[i * 2 + 1] = precisePhotoLocation.points[i].y;
-            }
-            scanResult.portraitImageInstance = MRZScannerActivity.nativeGetDeskewedWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId(), points);
+            scanResult.imageInstances[MRZScanResult.TYPE_PORTRAIT] =
+                    MRZScannerActivity.nativeGetDeskewedWrapImageDataInstance(getIntermediateResultManager(), result.getOriginalImageHashId(), flatten(precisePhotoLocation));
         }
 
         if (scanResult.mrzData != null) {
@@ -141,7 +110,44 @@ class MRZScanner extends CaptureVisionRouter implements CapturedResultReceiver, 
         } else {
             mrzScanResultReceiver.onNoMRZPageReceived(scanResult);
         }
+    }
 
+    private static boolean hasHighConfidencePortraitZone(LocalizedTextLinesUnit unit) {
+        for (int i = 0; i < unit.getAuxiliaryRegionElementsCount(); i++) {
+            if (unit.getAuxiliaryRegionElement(i).getName().equals("PortraitZone")
+                    && unit.getAuxiliaryRegionElement(i).getConfidence() > 60) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// Area guarded against zero: the original divided by it unchecked.
+    private static boolean isPortraitValid(Quadrilateral portrait, Quadrilateral docRegion) {
+        if (portrait.getArea() <= 0 || docRegion.getArea() / portrait.getArea() < 3) return false;
+        for (int i = 0; i < portrait.points.length; i++) {
+            if (!docRegion.isPointInQuadrilateral(portrait.points[i])) return false;
+        }
+        return true;
+    }
+
+    /// Frees the last frame's full-resolution buffers, which would else outlive the scan.
+    void releaseIntermediateUnits() {
+        scaledColourImageUnit = null;
+        localizedTextLinesUnit = null;
+        recognizedTextLinesUnit = null;
+        detectedQuadsUnit = null;
+        deskewedImageUnit = null;
+    }
+
+    /// Corner points as the flat int[8] {x0,y0,x1,y1,...} the JNI layer expects.
+    private static int[] flatten(Quadrilateral quad) {
+        int[] points = new int[quad.points.length * 2];
+        for (int i = 0; i < quad.points.length; i++) {
+            points[i * 2] = quad.points[i].x;
+            points[i * 2 + 1] = quad.points[i].y;
+        }
+        return points;
     }
 
 
@@ -159,6 +165,8 @@ class MRZScanner extends CaptureVisionRouter implements CapturedResultReceiver, 
     @Override
     public void onLocalizedTextLinesReceived(@NonNull LocalizedTextLinesUnit unit, IntermediateResultExtraInfo info) {
         localizedTextLinesUnit = unit;
+        // Localized text lines mean MRZ-shaped text, a far tighter signal than a raw quad.
+        mrzScanResultReceiver.onTextLineActivity(unit.getCount() > 0);
     }
 
     @Override
@@ -176,24 +184,12 @@ class MRZScanner extends CaptureVisionRouter implements CapturedResultReceiver, 
         deskewedImageUnit = unit;
     }
 
-    public boolean isReturnOriginalImage() {
-        return returnOriginalImage;
-    }
-
     public void setReturnOriginalImage(boolean returnOriginalImage) {
         this.returnOriginalImage = returnOriginalImage;
     }
 
-    public boolean isReturnDocumentImage() {
-        return returnDocumentImage;
-    }
-
     public void setReturnDocumentImage(boolean returnDocumentImage) {
         this.returnDocumentImage = returnDocumentImage;
-    }
-
-    public boolean isReturnPortraitImage() {
-        return returnPortraitImage;
     }
 
     public void setReturnPortraitImage(boolean returnPortraitImage) {
@@ -208,20 +204,17 @@ class MRZScanner extends CaptureVisionRouter implements CapturedResultReceiver, 
         this.mrzScanResultReceiver = mrzScanResultReceiver;
     }
 
-    //return int[8] for Quad
-
     public interface MRZScanResultReceiver {
-        default void onMRZDataReceived(@NonNull MRZScanResult scanResult) {
-            // Entering this callback means MRZData has been recognized, scanResult.mrzData != null;
-            // MRZ Document Image has also been detected; whether scanResult.mrzPageDocumentImageInstance is 0 depends on whether returnDocumentImage is set to true;
-            // Portrait Image may or may not be detected, scanResult.portraitImageInstance may be 0
+        /// Per frame; true when the frame localized text lines. Drives the MRZ-search spinner.
+        default void onTextLineActivity(boolean textLineLocalized) {
         }
 
+        /// MRZData recognized. TYPE_MRZ_DOCUMENT is 0 unless returnDocumentImage; TYPE_PORTRAIT may be 0.
+        default void onMRZDataReceived(@NonNull MRZScanResult scanResult) {
+        }
+
+        /// No MRZData, but a non-MRZ page was detected. Same slot caveats as above.
         default void onNoMRZPageReceived(@NonNull MRZScanResult scanResult) {
-            // Entering this callback means no MRZData has been recognized, scanResult.mrzData == null;
-            // A non-MRZ Page Document Image has been detected; whether scanResult.anotherPageDocumentImageInstance is 0 depends on whether returnDocumentImage is set to true;
-            // Portrait Image may or may not be detected, scanResult.portraitImageInstance may be 0
         }
     }
-
 }

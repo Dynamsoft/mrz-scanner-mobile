@@ -82,4 +82,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_bar" />
 
+    <ImageView
+        android:id="@+id/iv_flip_prompt"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:contentDescription="@string/tip2_1"
+        android:elevation="4dp"
+        android:src="@drawable/ic_flip_original"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/iv_guide_frame"
+        app:layout_constraintEnd_toEndOf="@id/iv_guide_frame"
+        app:layout_constraintStart_toStartOf="@id/iv_guide_frame"
+        app:layout_constraintTop_toTopOf="@id/iv_guide_frame" />
+
+    <ImageView
+        android:id="@+id/iv_scanner_spinner"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/spinner_content_description"
+        android:elevation="4dp"
+        android:src="@drawable/ic_scanner_spinner"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/iv_guide_frame"
+        app:layout_constraintEnd_toEndOf="@id/iv_guide_frame"
+        app:layout_constraintStart_toStartOf="@id/iv_guide_frame"
+        app:layout_constraintTop_toTopOf="@id/iv_guide_frame" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

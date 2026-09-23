@@ -1,0 +1,109 @@
+{
+  "layer_shapes" : {
+    "\/MaxPool_1_output_0" : {
+      "k" : 20,
+      "w" : 5,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 5
+    },
+    "\/Relu_1_output_0" : {
+      "k" : 20,
+      "w" : 5,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 5
+    },
+    "\/conv1\/Conv_output_0" : {
+      "k" : 10,
+      "w" : 28,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 28
+    },
+    "\/fc2\/Gemm_output_0" : {
+      "k" : 1,
+      "w" : 37,
+      "n" : 1,
+      "_rank" : 2,
+      "h" : 1
+    },
+    "\/MaxPool_output_0" : {
+      "k" : 10,
+      "w" : 14,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 14
+    },
+    "\/Reshape_output_0" : {
+      "k" : 1,
+      "w" : 500,
+      "n" : 1,
+      "_rank" : 2,
+      "h" : 1
+    },
+    "output" : {
+      "k" : 1,
+      "w" : 37,
+      "n" : 1,
+      "_rank" : 2,
+      "h" : 1
+    },
+    "\/Relu_output_0" : {
+      "k" : 10,
+      "w" : 14,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 14
+    },
+    "Softmax_\/fc2\/Gemm_output_0_expanded" : {
+      "k" : 1,
+      "w" : 37,
+      "n" : 1,
+      "_rank" : 5,
+      "h" : 1
+    },
+    "output_expanded_transposed" : {
+      "k" : 37,
+      "w" : 1,
+      "n" : 1,
+      "_rank" : 5,
+      "h" : 1
+    },
+    "output_expanded_transposed_transposed_back" : {
+      "k" : 1,
+      "w" : 37,
+      "n" : 1,
+      "_rank" : 5,
+      "h" : 1
+    },
+    "input" : {
+      "k" : 1,
+      "w" : 32,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 32
+    },
+    "\/conv2\/Conv_output_0" : {
+      "k" : 20,
+      "w" : 10,
+      "n" : 1,
+      "_rank" : 4,
+      "h" : 10
+    },
+    "\/Relu_2_output_0" : {
+      "k" : 1,
+      "w" : 64,
+      "n" : 1,
+      "_rank" : 2,
+      "h" : 1
+    },
+    "Softmax_\/fc2\/Gemm_output_0_expanded_transposed" : {
+      "k" : 37,
+      "w" : 1,
+      "n" : 1,
+      "_rank" : 5,
+      "h" : 1
+    }
+  }
+}

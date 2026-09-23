@@ -22,122 +22,104 @@ class PaddingLabel: UILabel {
 
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
-        return CGSize(
-            width: size.width + textInsets.left + textInsets.right,
-            height: size.height + textInsets.top + textInsets.bottom
-        )
+        return CGSize(width: size.width + textInsets.left + textInsets.right,
+                      height: size.height + textInsets.top + textInsets.bottom)
     }
 }
 
 // MARK: - SegmentPickerView
 class SegmentPickerView: UIView {
-    
+
     private var options = ["ID", "Both", "Passport"]
-    
-    var onChanged: ((String) -> Void)?
-    
+    private var buttons: [UIButton] = []
     private let stackView = UIStackView()
     private let indicator = UIView()
-    
+
+    var onChanged: ((String) -> Void)?
+
+    var isEnabled: Bool = true {
+        didSet {
+            guard isEnabled != oldValue else { return }
+            isUserInteractionEnabled = isEnabled
+            refreshButtons()
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    /// The selected option always sits at index 1 (centre), so selecting rotates the strip.
     func setSelectedOption(_ target: String) {
         guard options.contains(target) else { return }
-        
-        while options[1] != target {
-            let first = options.removeFirst()
-            options.append(first)
-        }
+        while options[1] != target { options.append(options.removeFirst()) }
         refreshButtons()
     }
-    
+
     private func setupUI() {
-        
         indicator.backgroundColor = .white
         indicator.layer.cornerRadius = 1
-        addSubview(indicator)
         indicator.translatesAutoresizingMaskIntoConstraints = false
-        
+        addSubview(indicator)
+
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .center
-        addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        
+        addSubview(stackView)
+
         NSLayoutConstraint.activate([
-            indicator.topAnchor.constraint(equalTo: self.topAnchor, constant: 7),
-            indicator.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            indicator.topAnchor.constraint(equalTo: topAnchor, constant: 7),
+            indicator.centerXAnchor.constraint(equalTo: centerXAnchor),
             indicator.widthAnchor.constraint(equalToConstant: 40),
             indicator.heightAnchor.constraint(equalToConstant: 2),
-            
-            stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
-            stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -24),
-            stackView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: 32)
         ])
-        
-        refreshButtons()
-    }
-    
-    private func refreshButtons() {
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        for (index, title) in options.enumerated() {
+
+        // Built once and restyled thereafter; a tap rotates the titles, not the views.
+        buttons = options.indices.map { index in
             let btn = UIButton(type: .system)
-            btn.setTitle(title, for: .normal)
-            
-            if index == 1 {
-                btn.setTitleColor(.white, for: .normal)
-                btn.titleLabel?.font = .boldSystemFont(ofSize: 14)
-            } else {
-                btn.setTitleColor(.white.withAlphaComponent(0.8), for: .normal)
-                btn.titleLabel?.font = .systemFont(ofSize: 14)
-            }
-            
+            btn.setTitleColor(.white, for: .normal)
             btn.tag = index
             btn.addTarget(self, action: #selector(handleTap(_:)), for: .touchUpInside)
             stackView.addArrangedSubview(btn)
+            return btn
+        }
+        refreshButtons()
+    }
+
+    /// The only place a tab is styled; dimming runs through `alpha` alone so nothing multiplies.
+    private func refreshButtons() {
+        for (index, button) in buttons.enumerated() {
+            let isSelected = (index == 1)
+            button.setTitle(options[index], for: .normal)
+            button.titleLabel?.font = isSelected ? .boldSystemFont(ofSize: 14) : .systemFont(ofSize: 14)
+            button.alpha = isSelected ? 1.0 : (isEnabled ? 0.8 : 0.5)
         }
     }
-    
+
     @objc private func handleTap(_ sender: UIButton) {
-        let tappedIndex = sender.tag
-        
-        if tappedIndex == 1 { return }
-        
-        UIView.transition(with: self.stackView, duration: 0.25, options: .transitionCrossDissolve, animations: {
-            if tappedIndex == 0 {
-                let last = self.options.removeLast()
-                self.options.insert(last, at: 0)
+        guard sender.tag != 1 else { return }
+        UIView.transition(with: stackView, duration: 0.25, options: .transitionCrossDissolve,
+                          animations: {
+            // Tapping the left option rotates the strip right, the right option rotates left.
+            if sender.tag == 0 {
+                self.options.insert(self.options.removeLast(), at: 0)
             } else {
-                let first = self.options.removeFirst()
-                self.options.append(first)
+                self.options.append(self.options.removeFirst())
             }
             self.refreshButtons()
-        }) { _ in
+        }, completion: { _ in
             self.onChanged?(self.options[1])
-        }
-    }
-    
-    var isEnabled: Bool = true {
-        didSet {
-            self.isUserInteractionEnabled = isEnabled
-            
-            let targetAlpha: CGFloat = isEnabled ? 0.8 : 0.5
-            
-            stackView.arrangedSubviews.forEach { button in
-                if button.tag != 1 {
-                    button.alpha = targetAlpha
-                }
-            }
-        }
+        })
     }
 }
-

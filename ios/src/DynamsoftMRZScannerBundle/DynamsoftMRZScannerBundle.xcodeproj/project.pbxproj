@@ -33,6 +33,9 @@
 		68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */; };
 		68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */; };
 		68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68CFBAF52D01794200E125F8 /* MRZScanResult.swift */; };
+		68AAA8E12F600001008FAD69 /* CameraPermission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AAA8E02F600001008FAD69 /* CameraPermission.swift */; };
+		68AAA8E32F600002008FAD69 /* MRZScannerViewController+UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AAA8E22F600002008FAD69 /* MRZScannerViewController+UI.swift */; };
+		68AAA8E52F600003008FAD69 /* MRZScannerViewController+Guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68AAA8E42F600003008FAD69 /* MRZScannerViewController+Guide.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +49,9 @@
 		68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerViewController.swift; sourceTree = "<group>"; };
 		68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScannerConfig.swift; sourceTree = "<group>"; };
 		68CFBAF52D01794200E125F8 /* MRZScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MRZScanResult.swift; sourceTree = "<group>"; };
+		68AAA8E02F600001008FAD69 /* CameraPermission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPermission.swift; sourceTree = "<group>"; };
+		68AAA8E22F600002008FAD69 /* MRZScannerViewController+UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MRZScannerViewController+UI.swift"; sourceTree = "<group>"; };
+		68AAA8E42F600003008FAD69 /* MRZScannerViewController+Guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MRZScannerViewController+Guide.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +90,9 @@
 				68A0373F2E4DB0B400277601 /* PrivacyInfo.xcprivacy */,
 				1DC845D82CEB04AE00998CCD /* DynamsoftMRZScannerBundle.h */,
 				68CFBAF12D01792700E125F8 /* MRZScannerViewController.swift */,
+				68AAA8E22F600002008FAD69 /* MRZScannerViewController+UI.swift */,
+				68AAA8E42F600003008FAD69 /* MRZScannerViewController+Guide.swift */,
+				68AAA8E02F600001008FAD69 /* CameraPermission.swift */,
 				68CFBAF32D01793C00E125F8 /* MRZScannerConfig.swift */,
 				68CFBAF52D01794200E125F8 /* MRZScanResult.swift */,
 				68AAA8CE2F552363008FAD69 /* ExtensionView.swift */,
@@ -202,7 +211,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# xcframework\nset -e\n# Sets\nreadonly target_name=${PROJECT_NAME}\nreadonly framework_name=${target_name}\nbuild_dir=\"build\"\nxcarchive_iOS=${build_dir}/${framework_name}_iOS.xcarchive\nxcarchive_iOSSimulator=${build_dir}/${framework_name}_iOSSimulator.xcarchive\n\n# Check Models directory\nfunction check_models {\n    printf \"====check_models====\\n\"\n    models_dir=\"$(dirname \"${PROJECT_FILE_PATH}\")/Models\"\n\n    if [ ! -d \"$models_dir\" ]; then\n        echo \"❌ Error: Models directory not found at $models_dir\"\n        exit 1\n    fi\n\n    echo \"📂 Checking files in $models_dir ...\"\n    ls -al \"$models_dir\"\n\n    # Find files other than .gitkeep and .DS_Store\n    files=$(find \"$models_dir\" -type f ! -name \".gitkeep\" ! -name \".DS_Store\")\n\n    if [ -z \"$files\" ]; then\n        echo \"❌ Error: Models directory is empty (only .gitkeep/.DS_Store found). Please add model files.\"\n        exit 1\n    fi\n\n    echo \"✅ Models directory check passed.\"\n}\n\n# Clean oldest\nfunction build_clean {\n    printf \"====build_clean====\"\n    if [ -d ${build_dir} ]\n    then\n        rm -rf ${build_dir}\n    fi\n}\n\n# Build frameworks\nfunction build_frameworks {\n    printf \"====build_frameworks====\"\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS\" -archivePath ${xcarchive_iOS} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS Simulator\" -archivePath ${xcarchive_iOSSimulator} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES\n}\n\n# Build xcframework\nfunction build_xcframework {\n    printf \"====build_xcframework====\"\n    xcodebuild -create-xcframework -archive ${xcarchive_iOS} -framework \"${framework_name}.framework\" -archive ${xcarchive_iOSSimulator} -framework \"${framework_name}.framework\" -output \"${build_dir}/${framework_name}.xcframework\"\n}\n\n# do\ncheck_models\nbuild_clean\nbuild_frameworks\nbuild_xcframework\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n# xcframework\nset -e\n# Sets\nreadonly target_name=${PROJECT_NAME}\nreadonly framework_name=${target_name}\nbuild_dir=\"build\"\nxcarchive_iOS=${build_dir}/${framework_name}_iOS.xcarchive\nxcarchive_iOSSimulator=${build_dir}/${framework_name}_iOSSimulator.xcarchive\n\n# Check Models directory\nfunction check_models {\n    printf \"====check_models====\\n\"\n    models_dir=\"$(dirname \"${PROJECT_FILE_PATH}\")/Models\"\n\n    if [ ! -d \"$models_dir\" ]; then\n        echo \"❌ Error: Models directory not found at $models_dir\"\n        exit 1\n    fi\n\n    echo \"📂 Checking files in $models_dir ...\"\n    ls -al \"$models_dir\"\n\n    # Find files other than .gitkeep and .DS_Store\n    files=$(find \"$models_dir\" -type f ! -name \".gitkeep\" ! -name \".DS_Store\")\n\n    if [ -z \"$files\" ]; then\n        echo \"❌ Error: Models directory is empty (only .gitkeep/.DS_Store found). Please add model files.\"\n        exit 1\n    fi\n\n    echo \"✅ Models directory check passed.\"\n}\n\n# Clean oldest\nfunction build_clean {\n    printf \"====build_clean====\"\n    if [ -d ${build_dir} ]\n    then\n        rm -rf ${build_dir}\n    fi\n}\n\n# Build frameworks\nfunction build_frameworks {\n    printf \"====build_frameworks====\"\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS\" -archivePath ${xcarchive_iOS} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO\n    xcodebuild archive -scheme ${target_name} -destination \"generic/platform=iOS Simulator\" -archivePath ${xcarchive_iOSSimulator} SKIP_INSTALL=NO BUILD_LIBRARY_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY=\"\" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO\n}\n\n# Build xcframework\nfunction build_xcframework {\n    printf \"====build_xcframework====\"\n    xcodebuild -create-xcframework -archive ${xcarchive_iOS} -framework \"${framework_name}.framework\" -archive ${xcarchive_iOSSimulator} -framework \"${framework_name}.framework\" -output \"${build_dir}/${framework_name}.xcframework\"\n}\n\n# do\ncheck_models\nbuild_clean\nbuild_frameworks\nbuild_xcframework\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -213,6 +222,9 @@
 			files = (
 				68CFBAF42D01793D00E125F8 /* MRZScannerConfig.swift in Sources */,
 				68CFBAF22D01792A00E125F8 /* MRZScannerViewController.swift in Sources */,
+				68AAA8E32F600002008FAD69 /* MRZScannerViewController+UI.swift in Sources */,
+				68AAA8E52F600003008FAD69 /* MRZScannerViewController+Guide.swift in Sources */,
+				68AAA8E12F600001008FAD69 /* CameraPermission.swift in Sources */,
 				68AAA8CF2F552363008FAD69 /* ExtensionView.swift in Sources */,
 				68CFBAF62D01794300E125F8 /* MRZScanResult.swift in Sources */,
 			);
@@ -274,7 +286,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -334,7 +346,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -361,13 +373,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.1300;
+				MARKETING_VERSION = 3.6.2000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -395,13 +407,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.1300;
+				MARKETING_VERSION = 3.6.2000;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dynamsoft.DynamsoftMRZScannerBundle;
@@ -472,7 +484,7 @@
 			repositoryURL = "https://github.com/Dynamsoft/capture-vision-spm";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.4.1000;
+				minimumVersion = 3.6.2000;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

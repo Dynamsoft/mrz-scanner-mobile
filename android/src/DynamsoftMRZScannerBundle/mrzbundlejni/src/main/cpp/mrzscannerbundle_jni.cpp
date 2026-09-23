@@ -11,28 +11,29 @@ using namespace dynamsoft::ddn::intermediate_results;
 using namespace dynamsoft::dlr::intermediate_results;
 using namespace dynamsoft::utility;
 
-//#include "android/log.h"
-//#define LOG_TAG "Dynamsoft JNI"
-//#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-//#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-
-extern "C"
-JNIEXPORT jlong JNICALL
-Java_com_dynamsoft_mrzscannerbundle_ui_MRZScannerActivity_nativeGetWrapImageDataInstance(JNIEnv *env, jclass clazz, jobject ir_manager, jstring image_hash_id) {
+// Unwraps the Java IntermediateResultManager and fetches the original image behind a
+// hash id. Returns nullptr if either side is unavailable.
+static CImageData *GetOriginalImage(JNIEnv *env, jobject ir_manager, jstring image_hash_id) {
     if (ir_manager == nullptr || image_hash_id == nullptr) {
-        return 0;
+        return nullptr;
     }
     jclass clsIRM = env->FindClass("com/dynamsoft/cvr/intermediate_results/IntermediateResultManager");
     jfieldID id = env->GetFieldID(clsIRM, "mInstance", "J");
     jlong instance = env->GetLongField(ir_manager, id);
-    if (instance == 0) {
-        return 0;
-    }
-    auto pManager = (CIntermediateResultManager *) instance;
-    auto pHashId = env->GetStringUTFChars(image_hash_id, nullptr);
-    auto pImage = pManager->GetOriginalImage(pHashId);
-    env->ReleaseStringUTFChars(image_hash_id, pHashId);
     env->DeleteLocalRef(clsIRM);
+    if (instance == 0) {
+        return nullptr;
+    }
+    auto pHashId = env->GetStringUTFChars(image_hash_id, nullptr);
+    auto pImage = ((CIntermediateResultManager *) instance)->GetOriginalImage(pHashId);
+    env->ReleaseStringUTFChars(image_hash_id, pHashId);
+    return pImage;
+}
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_com_dynamsoft_mrzscannerbundle_ui_MRZScannerActivity_nativeGetWrapImageDataInstance(JNIEnv *env, jclass clazz, jobject ir_manager, jstring image_hash_id) {
+    auto pImage = GetOriginalImage(env, ir_manager, image_hash_id);
     if (pImage == nullptr) {
         return 0;
     }
@@ -45,20 +46,10 @@ extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_dynamsoft_mrzscannerbundle_ui_MRZScannerActivity_nativeGetDeskewedWrapImageDataInstance(JNIEnv *env, jclass clazz, jobject ir_manager, jstring image_hash_id,
                                                                                                  jintArray points) {
-    if (ir_manager == nullptr || image_hash_id == nullptr || points == nullptr || env->GetArrayLength(points) != 8) {
+    if (points == nullptr || env->GetArrayLength(points) != 8) {
         return 0;
     }
-    jclass clsIRM = env->FindClass("com/dynamsoft/cvr/intermediate_results/IntermediateResultManager");
-    jfieldID id = env->GetFieldID(clsIRM, "mInstance", "J");
-    jlong instance = env->GetLongField(ir_manager, id);
-    if (instance == 0) {
-        return 0;
-    }
-    auto pManager = (CIntermediateResultManager *) instance;
-    auto pHashId = env->GetStringUTFChars(image_hash_id, nullptr);
-    auto pImage = pManager->GetOriginalImage(pHashId);
-    env->ReleaseStringUTFChars(image_hash_id, pHashId);
-    env->DeleteLocalRef(clsIRM);
+    auto pImage = GetOriginalImage(env, ir_manager, image_hash_id);
     if (pImage == nullptr) {
         return 0;
     }

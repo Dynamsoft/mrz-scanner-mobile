@@ -15,6 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.dynamsoft.mrzscannerbundle.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,6 @@ class BottomBarSelector extends ConstraintLayout {
     public static final String KEY_ID = "ID";
     public static final String KEY_BOTH = "BOTH";
     public static final String KEY_PASSPORT = "PASSPORT";
-
 
     public interface OnSelectedItemChangedListener {
         void onSelectedItemChanged(@NonNull String key);
@@ -46,60 +47,34 @@ class BottomBarSelector extends ConstraintLayout {
 
     private boolean isAnimating = false;
 
-    public BottomBarSelector(@NonNull Context context) {
-        super(context);
-        init(context);
-    }
-
     public BottomBarSelector(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
-    }
-
-    public BottomBarSelector(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.bottombar, this, true);
 
         tabContainer = findViewById(R.id.tabContainer);
-
         TextView tabId = findViewById(R.id.tab_id);
         TextView tabBoth = findViewById(R.id.tab_both);
         TextView tabPassport = findViewById(R.id.tab_passport);
         tabs = new TextView[]{tabId, tabBoth, tabPassport};
 
         // labels are used for UI display only; keys are internal identifiers
-        labels.put(KEY_ID, tabId.getText() == null ? "ID" : tabId.getText().toString());
-        labels.put(KEY_BOTH, tabBoth.getText() == null ? "Both" : tabBoth.getText().toString());
-        labels.put(KEY_PASSPORT, tabPassport.getText() == null ? "Passport" : tabPassport.getText().toString());
+        labels.put(KEY_ID, labelOf(tabId, "ID"));
+        labels.put(KEY_BOTH, labelOf(tabBoth, "Both"));
+        labels.put(KEY_PASSPORT, labelOf(tabPassport, "Passport"));
 
         // Default display order: ID | BOTH(selected) | PASSPORT
         keys.clear();
-        keys.add(KEY_ID);
-        keys.add(KEY_BOTH);
-        keys.add(KEY_PASSPORT);
+        keys.addAll(Arrays.asList(KEY_ID, KEY_BOTH, KEY_PASSPORT));
 
         // Click: rotate by position so the clicked item becomes centered (selected)
         for (int i = 0; i < tabs.length; i++) {
             final int index = i;
             tabs[i].setOnClickListener(v -> {
                 if (isAnimating) return;
-
-                // Already the center item
-                if (index == CENTER_INDEX) {
+                if (index == CENTER_INDEX) { // Already the center item
                     notifySelectedChanged();
-                    return;
-                }
-
-                if (index == 0) {
-                    // left -> center: rotate right
-                    animateOneStepRight();
-                } else if (index == 2) {
-                    // right -> center: rotate left
-                    animateOneStepLeft();
+                } else {
+                    animateOneStep(index == 0 ? 1 : -1);
                 }
             });
         }
@@ -111,13 +86,13 @@ class BottomBarSelector extends ConstraintLayout {
         });
     }
 
-    /**
-     * Select an item by stable key (KEY_ID/KEY_BOTH/KEY_PASSPORT). The selected item is always centered.
-     */
+    private static String labelOf(TextView tab, String fallback) {
+        return tab.getText() == null ? fallback : tab.getText().toString();
+    }
+
+    /// Select by stable key (KEY_ID/KEY_BOTH/KEY_PASSPORT); the selected item is always centered.
     public void selectItem(@NonNull String key) {
-        if (isAnimating) return;
-        if (tabs == null || tabs.length != 3) return;
-        if (keys.size() != 3) return;
+        if (isAnimating || tabs == null || tabs.length != 3 || keys.size() != 3) return;
 
         // Already selected: just update style/callback
         if (key.equals(keys.get(CENTER_INDEX))) {
@@ -126,22 +101,18 @@ class BottomBarSelector extends ConstraintLayout {
             return;
         }
 
-        int targetIndex = keys.indexOf(key);
-        if (targetIndex == -1) return;
-
         // Only one step rotation is needed
-        if (targetIndex == 2) {
-            animateOneStepLeft();
-        } else if (targetIndex == 0) {
-            animateOneStepRight();
+        int targetIndex = keys.indexOf(key);
+        if (targetIndex != -1) {
+            animateOneStep(targetIndex == 0 ? 1 : -1);
         }
     }
 
     @NonNull
     public String getSelectedKey() {
         if (keys.size() != 3) return "";
-        String k = keys.get(CENTER_INDEX);
-        return k == null ? "" : k;
+        String key = keys.get(CENTER_INDEX);
+        return key == null ? "" : key;
     }
 
     public void addOnSelectedItemChangedListener(OnSelectedItemChangedListener listener) {
@@ -150,21 +121,15 @@ class BottomBarSelector extends ConstraintLayout {
         }
     }
 
-    public void removeOnSelectedItemChangedListener(OnSelectedItemChangedListener listener) {
-        listeners.remove(listener);
-    }
-
-    private void animateOneStepLeft() {
+    /// Slides one slot and re-centers; +1 rotates right ([0,1,2] -> [2,0,1]), -1 rotates left.
+    private void animateOneStep(int direction) {
         isAnimating = true;
-
-        final float step = tabContainer.getWidth() / 3f;
-
         tabContainer.animate()
-                .translationX(-step)
+                .translationX(direction * tabContainer.getWidth() / 3f)
                 .setDuration(200)
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .withEndAction(() -> {
-                    rotateLeftKeys();
+                    Collections.rotate(keys, direction);
                     tabContainer.setTranslationX(0f);
                     syncTextsFromKeys();
                     applySelectedStyle();
@@ -172,42 +137,6 @@ class BottomBarSelector extends ConstraintLayout {
                     isAnimating = false;
                 })
                 .start();
-    }
-
-    private void animateOneStepRight() {
-        isAnimating = true;
-
-        final float step = tabContainer.getWidth() / 3f;
-
-        tabContainer.animate()
-                .translationX(step)
-                .setDuration(200)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
-                .withEndAction(() -> {
-                    rotateRightKeys();
-                    tabContainer.setTranslationX(0f);
-                    syncTextsFromKeys();
-                    applySelectedStyle();
-                    notifySelectedChanged();
-                    isAnimating = false;
-                })
-                .start();
-    }
-
-    private void rotateLeftKeys() {
-        // [0,1,2] -> [1,2,0]
-        String first = keys.get(0);
-        keys.set(0, keys.get(1));
-        keys.set(1, keys.get(2));
-        keys.set(2, first);
-    }
-
-    private void rotateRightKeys() {
-        // [0,1,2] -> [2,0,1]
-        String last = keys.get(2);
-        keys.set(2, keys.get(1));
-        keys.set(1, keys.get(0));
-        keys.set(0, last);
     }
 
     private void syncTextsFromKeys() {
@@ -218,16 +147,12 @@ class BottomBarSelector extends ConstraintLayout {
         }
     }
 
+    /// Restates every tab: labels rotate across fixed views, so a dimmed side tab must reset to 1f.
     private void applySelectedStyle() {
         for (int i = 0; i < 3; i++) {
-            if (i == CENTER_INDEX) {
-                tabs[i].setTextColor(0xFFFFFFFF);
-                tabs[i].setTypeface(null, Typeface.BOLD);
-            } else {
-                tabs[i].setTextColor(0xFFFFFFFF);
-                tabs[i].setAlpha(0.8f);
-                tabs[i].setTypeface(null, Typeface.NORMAL);
-            }
+            tabs[i].setTextColor(0xFFFFFFFF);
+            tabs[i].setTypeface(null, i == CENTER_INDEX ? Typeface.BOLD : Typeface.NORMAL);
+            tabs[i].setAlpha(i == CENTER_INDEX ? 1f : 0.8f);
         }
     }
 
@@ -241,7 +166,6 @@ class BottomBarSelector extends ConstraintLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-
         for (int i = 0; i < 3; i++) {
             tabs[i].setEnabled(enabled);
             tabs[i].setClickable(enabled);
