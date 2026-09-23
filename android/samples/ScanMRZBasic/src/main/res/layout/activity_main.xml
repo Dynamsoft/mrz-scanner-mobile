@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Deliberately plain. This sample is the runnable counterpart to the user guide, so
+    the layout stays the smallest thing that can show a scan result. Styling belongs
+    in the ScanMRZ sample, not here.
+
+    The scan button sits outside the ScrollView so it stays reachable at the bottom of
+    the screen while a long result scrolls above it.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Carries the canceled message and any error string. -->
+            <TextView
+                android:id="@+id/tv_status"
+                style="@style/FieldValue"
+                android:textSize="16sp"
+                android:visibility="gone"
+                tools:text="Scan canceled"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/result_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/iv_portrait"
+                    android:layout_width="96dp"
+                    android:layout_height="128dp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <TextView style="@style/FieldLabel" android:text="Full Name" />
+                <TextView android:id="@+id/tv_full_name" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Document Number" />
+                <TextView android:id="@+id/tv_doc_number" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Nationality" />
+                <TextView android:id="@+id/tv_nationality" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Date of Birth" />
+                <TextView android:id="@+id/tv_date_of_birth" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Date of Expiry" />
+                <TextView android:id="@+id/tv_date_of_expiry" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Document Type" />
+                <TextView android:id="@+id/tv_doc_type" style="@style/FieldValue" />
+
+                <TextView style="@style/FieldLabel" android:text="Raw MRZ Text" />
+                <TextView
+                    android:id="@+id/tv_raw_mrz"
+                    style="@style/FieldValue"
+                    android:fontFamily="monospace" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:padding="16dp"
+        android:text="@string/scan_an_mrz"
+        android:textSize="18sp" />
+
+</LinearLayout>

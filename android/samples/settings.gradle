@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "MRZScannerSamples"
+include ':ScanMRZBasic'
+include ':ScanMRZBasicKt'
+include ':ScanMRZ'
+include ':ScanMRZKt'

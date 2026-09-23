@@ -2,12 +2,11 @@
 //  ResultViewController.swift
 //  ScanMRZ
 //
-//  Created by dynamsoft on 2026/2/11.
-//
 
 import Foundation
 import UIKit
 import DynamsoftMRZScannerBundle
+import DynamsoftCaptureVisionBundle
 
 class ResultViewController: UIViewController {
     
@@ -84,7 +83,26 @@ class ResultViewController: UIViewController {
         return view
     }()
     private var isProcessedSelected = true
-    
+
+    /// Stands in for the tabs when only one set came back, styled like the sections below.
+    let imagesHeaderLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    // Collapsed, not merely hidden: a hidden view still occupies the space its constraints
+    // reserve, so the heights and the gaps above them have to go to zero as well.
+    private let processedSegmentStackView = UIStackView()
+    private let originalSegmentStackView = UIStackView()
+
+    private var segmentTopConstraint: NSLayoutConstraint!
+    private var segmentHeightConstraint: NSLayoutConstraint!
+    private var imageStackTopConstraint: NSLayoutConstraint!
+    private var imageStackHeightConstraint: NSLayoutConstraint!
+
     // Document Images
     let imageStackView: UIStackView = {
         let stackView = UIStackView()
@@ -92,7 +110,6 @@ class ResultViewController: UIViewController {
         stackView.spacing = 16
         stackView.distribution = .fillEqually
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.tag = 300
         return stackView
     }()
     let primaryImageView: UIImageView = {
@@ -160,9 +177,6 @@ class ResultViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
-    // Dropdown Menu
-    private let dropdownView = UIView()
     
     // Bottom Buttons
     private let bottomButtonContainer = UIView()
@@ -263,23 +277,34 @@ class ResultViewController: UIViewController {
     private func setupCustomSegmentedControl() {
         // Container view
         contentView.addSubview(segmentContainerView)
-        let leftStackView = UIStackView(arrangedSubviews: [processedButton, processedUnderline])
-        leftStackView.axis = .vertical
-        leftStackView.spacing = 2
+        processedSegmentStackView.addArrangedSubview(processedButton)
+        processedSegmentStackView.addArrangedSubview(processedUnderline)
+        processedSegmentStackView.axis = .vertical
+        processedSegmentStackView.spacing = 2
+
+        originalSegmentStackView.addArrangedSubview(originalButton)
+        originalSegmentStackView.addArrangedSubview(originalUnderline)
+        originalSegmentStackView.axis = .vertical
+        originalSegmentStackView.spacing = 2
+
+        segmentContainerView.addArrangedSubview(processedSegmentStackView)
+        segmentContainerView.addArrangedSubview(originalSegmentStackView)
         
-        let rightStackView = UIStackView(arrangedSubviews: [originalButton, originalUnderline])
-        rightStackView.axis = .vertical
-        rightStackView.spacing = 2
-        
-        segmentContainerView.addArrangedSubview(leftStackView)
-        segmentContainerView.addArrangedSubview(rightStackView)
-        
+        segmentTopConstraint = segmentContainerView.topAnchor.constraint(equalTo: portraitImageView.bottomAnchor, constant: 24)
+        segmentHeightConstraint = segmentContainerView.heightAnchor.constraint(equalToConstant: 30)
+
+        // Shares the container's slot, so the images below stay anchored either way.
+        contentView.addSubview(imagesHeaderLabel)
+
         NSLayoutConstraint.activate([
-            segmentContainerView.topAnchor.constraint(equalTo: portraitImageView.bottomAnchor, constant: 24),
+            segmentTopConstraint,
             segmentContainerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            segmentContainerView.heightAnchor.constraint(equalToConstant: 30),
+            segmentHeightConstraint,
+
+            imagesHeaderLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            imagesHeaderLabel.centerYAnchor.constraint(equalTo: segmentContainerView.centerYAnchor),
         ])
-        
+
         processedButton.addTarget(self, action: #selector(processedTapped), for: .touchUpInside)
         originalButton.addTarget(self, action: #selector(originalTapped), for: .touchUpInside)
     }
@@ -316,11 +341,14 @@ class ResultViewController: UIViewController {
         imageStackView.addArrangedSubview(primaryImageView)
         imageStackView.addArrangedSubview(secondaryImageView)
         
+        imageStackTopConstraint = imageStackView.topAnchor.constraint(equalTo: segmentContainerView.bottomAnchor, constant: 16)
+        imageStackHeightConstraint = imageStackView.heightAnchor.constraint(equalToConstant: 160)
+
         NSLayoutConstraint.activate([
-            imageStackView.topAnchor.constraint(equalTo: segmentContainerView.bottomAnchor, constant: 16),
+            imageStackTopConstraint,
             imageStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             imageStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            imageStackView.heightAnchor.constraint(equalToConstant: 160)
+            imageStackHeightConstraint
         ])
     }
     
@@ -376,80 +404,185 @@ class ResultViewController: UIViewController {
         ])
     }
     
-    private func createInfoRow(label: String, value: String) -> UIView {
+    /// Amber (#FFC107) used to color values whose MRZ check digit failed.
+    private static let warningAmber = UIColor(red: 1.0, green: 193.0/255.0, blue: 7.0/255.0, alpha: 1.0)
+
+    /// Styles `label` as a failed value: underlined text, so it reads as a tappable link,
+    /// plus an inline amber icon. Renders with `label.font`, so set the font first.
+    private static func applyFailedValue(_ text: String, to label: UILabel) {
+        let font: UIFont = label.font
+        let result = NSMutableAttributedString(string: text, attributes: [
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
+            .foregroundColor: warningAmber,
+            .font: font
+        ])
+
+        let iconHeight = font.pointSize * 1.2
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(
+            systemName: "exclamationmark.circle.fill",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: iconHeight)
+        )?.withTintColor(warningAmber, renderingMode: .alwaysOriginal)
+        if let icon = attachment.image {
+            // Width follows the symbol's own aspect ratio; y sits it on the text baseline.
+            attachment.bounds = CGRect(x: 0, y: font.descender,
+                                       width: iconHeight * icon.size.width / icon.size.height,
+                                       height: iconHeight)
+        }
+
+        // The separating spaces stay outside the underline, as on Android.
+        result.append(NSAttributedString(string: "  "))
+        result.append(NSAttributedString(attachment: attachment))
+
+        label.attributedText = result
+        // The icon has no accessible text and color alone isn't a cue, so spell it out.
+        label.accessibilityLabel = "\(text), validation failed"
+    }
+
+    private func createInfoRow(label: String, value: String, status: ValidationStatus = .none) -> UIView {
         let containerView = UIView()
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         let labelView = UILabel()
         labelView.text = label
         labelView.textColor = .lightGray
         labelView.font = UIFont.systemFont(ofSize: 14)
         labelView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(labelView)
-        
+
+        let failed = status == .failed
+        let displayValue = value.isEmpty ? "N/A" : value
+
         let valueView = UILabel()
-        valueView.text = value
-        valueView.textColor = .white
         valueView.font = UIFont.systemFont(ofSize: 14)
-        valueView.textAlignment = .left
+        valueView.textColor = .white
+        // A failed value carries its own amber color in the attributed string.
+        if failed {
+            Self.applyFailedValue(displayValue, to: valueView)
+        } else {
+            valueView.text = displayValue
+        }
         valueView.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(valueView)
-        
+
         NSLayoutConstraint.activate([
             labelView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             labelView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             labelView.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 0.5),
-            
+
             valueView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             valueView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             valueView.leadingAnchor.constraint(equalTo: labelView.trailingAnchor, constant: 8),
-            
+
             containerView.heightAnchor.constraint(equalToConstant: 20)
         ])
-        
+
+        if failed {
+            let tap = UITapGestureRecognizer(target: self, action: #selector(showValidationInfoDialog))
+            containerView.addGestureRecognizer(tap)
+            containerView.isUserInteractionEnabled = true
+        }
+
         return containerView
+    }
+
+    /// Validation styling for a label outside the info rows — the raw MRZ text. On `.failed`
+    /// it gets the amber treatment and opens the dialog on tap; otherwise `defaultColor`.
+    private func applyLabel(_ label: UILabel, text: String, status: ValidationStatus, defaultColor: UIColor) {
+        let display = text.isEmpty ? "N/A" : text
+        label.textColor = defaultColor
+        guard status == .failed else {
+            label.attributedText = nil
+            label.accessibilityLabel = nil
+            label.text = display
+            return
+        }
+
+        Self.applyFailedValue(display, to: label)
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(showValidationInfoDialog)))
+    }
+
+    @objc private func showValidationInfoDialog() {
+        let alert = UIAlertController(
+            title: "Field validation warning",
+            message: "This value doesn't match its check digit. The document may be invalid or altered.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
     
     // MARK: - Populate Data
     private func populateData() {
         guard let data = mrzData else { return }
-        
-        // Name
-        nameLabel.text = "\(data.firstName) \(data.lastName)"
-        
-        // Sub Info
+
+        // Sex can now be empty when the field wasn't parsed — .capitalized returns "" safely.
         let genderText = data.sex.capitalized
-        let ageText = "\(data.age) years old"
-        subInfoLabel.text = "\(genderText), \(ageText)\nExpiry: \(data.dateOfExpire)"
-        
-        // Portrait Image - use passed image if available, otherwise use default "user" image
-        if let portrait = portraitImage {
-            portraitImageView.image = portrait
-        } else {
-            portraitImageView.image = UIImage(named: "user")
-        }
-        
+
+        // No validation highlighting here: a compound line ("gender, age") tinted on one
+        // field's status would imply both are invalid. The sections below do it per field.
+        nameLabel.text = "\(data.firstName) \(data.lastName)".trimmingCharacters(in: .whitespaces)
+        subInfoLabel.text = "\(genderText), \(data.age) years old\nExpiry: \(data.dateOfExpire)"
+
+        // The portrait is returned by default, but is nil when none could be cropped —
+        // a TD1/TD2 ID scanned MRZ-side only, for instance. Fall back to the placeholder.
+        portraitImageView.image = portraitImage ?? UIImage(named: "user")
+
         // Document Images
+        updateImageSectionVisibility()
         updateDocumentImages()
-        
+
         // Personal Info
         personalInfoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Given Name", value: data.firstName))
-        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Surname", value: data.lastName))
-        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Date of Birth", value: data.dateOfBirth))
-        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Gender", value: data.sex.capitalized))
-        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Nationality", value: data.nationalityRaw))
-        
+        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Given Name",   value: data.firstName,     status: data.getFieldValidationStatus("firstName")))
+        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Surname",      value: data.lastName,      status: data.getFieldValidationStatus("lastName")))
+        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Date of Birth",value: data.dateOfBirth,   status: data.getFieldValidationStatus("dateOfBirth")))
+        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Gender",       value: genderText,         status: data.getFieldValidationStatus("sex")))
+        personalInfoStackView.addArrangedSubview(createInfoRow(label: "Nationality",  value: data.nationalityRaw,status: data.getFieldValidationStatus("nationality")))
+
         // Document Info
         documentInfoStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Doc. Type", value: data.documentType == "MRTD_TD3_PASSPORT" ? "Passport" : "ID"))
-        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Doc. Number", value: data.documentNumber))
-        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Expiry Date", value: data.dateOfExpire))
-        
-        // Raw MRZ Text
-        mrzValueLabel.text = data.mrzText
+        // Doc Type is derived from codeType — not independently validated.
+        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Doc. Type",   value: data.documentType == "MRTD_TD3_PASSPORT" ? "Passport" : "ID"))
+        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Doc. Number", value: data.documentNumber, status: data.getFieldValidationStatus("documentNumber")))
+        documentInfoStackView.addArrangedSubview(createInfoRow(label: "Expiry Date", value: data.dateOfExpire,   status: data.getFieldValidationStatus("dateOfExpire")))
+
+        // Tappable too: a line-composite failure can flag the raw MRZ when no individual
+        // field failed — corruption in a field without its own check digit, say.
+        applyLabel(mrzValueLabel,
+                   text: data.mrzText,
+                   status: data.getFieldValidationStatus("mrzText"),
+                   defaultColor: .lightGray)
     }
     
+    /// Shows each segment only when its own image set came back, and collapses the section
+    /// when none did — `returnOriginalImage` is false by default, so "Processed" often stands alone.
+    private func updateImageSectionVisibility() {
+        let hasProcessed = primaryDocumentImage != nil || secondaryDocumentImage != nil
+        let hasOriginal = primaryOriginalImage != nil || secondaryOriginalImage != nil
+        let hasAnyImage = hasProcessed || hasOriginal
+
+        // Tabs only when there are two sets to switch between; one set gets a plain header.
+        let showsTabs = hasProcessed && hasOriginal
+        if !showsTabs {
+            isProcessedSelected = hasProcessed
+        }
+        updateSegmentAppearance()
+
+        segmentContainerView.isHidden = !showsTabs
+        imagesHeaderLabel.isHidden = showsTabs || !hasAnyImage
+        imagesHeaderLabel.text = hasProcessed ? "Processed Image(s)" : "Original Image(s)"
+
+        segmentTopConstraint.constant = hasAnyImage ? 24 : 0
+        segmentHeightConstraint.constant = hasAnyImage ? 30 : 0
+
+        imageStackView.isHidden = !hasAnyImage
+        imageStackHeightConstraint.constant = hasAnyImage ? 160 : 0
+        imageStackTopConstraint.constant = hasAnyImage ? 16 : 0
+    }
+
     private func updateDocumentImages() {
         if isProcessedSelected {
             primaryImageView.image = primaryDocumentImage
@@ -541,16 +674,21 @@ extension ResultViewController {
 
     // MARK: - Save Image Callback
     @objc private func image(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            let alert = UIAlertController(title: "Save Error", message: error.localizedDescription, preferredStyle: .alert)
+        // This callback carries no thread guarantee, so hop before touching UIKit.
+        DispatchQueue.main.async { [weak self] in
+            let saved = error == nil
+            let alert = UIAlertController(
+                title: saved ? "Saved!" : "Save Error",
+                message: error?.localizedDescription ?? "The image has been saved to your library.",
+                preferredStyle: .alert)
+            // Success fades itself out below, but the OK action stays so a missed
+            // dismissal never leaves the user with an alert they cannot close.
             alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
-        } else {
-            let successAlert = UIAlertController(title: "Saved!", message: "The image has been saved to your library.", preferredStyle: .alert)
-            present(successAlert, animated: true)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                successAlert.dismiss(animated: true)
+            self?.present(alert, animated: true)
+
+            guard saved else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak alert] in
+                alert?.dismiss(animated: true)
             }
         }
     }
