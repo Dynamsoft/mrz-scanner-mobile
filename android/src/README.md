@@ -2,7 +2,7 @@
 
 1. **Download Source Code**
 
-   - Navigate to the android/src folder in this repository and download the source code. Modify the code according to your project requirements.
+   - Clone this repository and use the contents of the `android/src/` folder. Modify the code according to your project requirements.
 
 2. **Import DynamsoftMRZScannerBundle/dynamsoftmrzscannerbundle as a Module**
 

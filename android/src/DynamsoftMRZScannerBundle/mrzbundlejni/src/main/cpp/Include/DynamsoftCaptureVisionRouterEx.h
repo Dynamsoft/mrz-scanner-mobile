@@ -37,7 +37,7 @@ namespace dynamsoft
 			static void OutputCacheLog();
 			static void SetLogOutputMode(int mode);
 #endif
-			
+
 		};
 	}
 }

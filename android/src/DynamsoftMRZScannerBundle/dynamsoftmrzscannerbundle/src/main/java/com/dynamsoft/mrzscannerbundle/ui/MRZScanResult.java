@@ -7,6 +7,9 @@ import static com.dynamsoft.mrzscannerbundle.ui.MRZScanResult.EnumResultStatus.R
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
@@ -16,28 +19,50 @@ import com.dynamsoft.core.basic_structures.ImageData;
 public final class MRZScanResult implements Parcelable {
     final static String EXTRA = "MRZScanResult";
 
+    // Eager load, else a result unparceled on a fresh process hits native before the shim loads (issue #30).
+    static {
+        System.loadLibrary("DynamsoftMRZScannerBundleJni");
+    }
+
+    /// Index into {@link #imageInstances}, the parcel order, and the {@code type} for {@link #_getImageInstance}. Do not reorder.
+    static final int TYPE_MRZ_ORIGINAL = 0;
+    static final int TYPE_MRZ_DOCUMENT = 1;
+    static final int TYPE_OTHER_ORIGINAL = 2;
+    static final int TYPE_OTHER_DOCUMENT = 3;
+    static final int TYPE_PORTRAIT = 4;
+    private static final int TYPE_COUNT = 5;
+
     @EnumResultStatus
     int resultStatus;
     int errorCode;
     String errorString;
     MRZData mrzData;
-    long mrzPageOriginalImageInstance;
-    long mrzPageDocumentImageInstance;
-    long anotherPageOriginalImageInstance;
-    long anotherPageDocumentImageInstance;
-    long portraitImageInstance;
-    transient ImageData primaryOriginalImage;
-    transient ImageData primaryDocumentImage;
-    transient ImageData secondaryOriginalImage;
-    transient ImageData secondaryDocumentImage;
-    transient ImageData portraitImage;
-
+    /// Native WrapImageData pointers, indexed by the TYPE_* constants above. 0 means absent.
+    final long[] imageInstances = new long[TYPE_COUNT];
+    /// Lazily materialized ImageData per slot; allocated on first use.
+    transient ImageData[] cachedImages;
 
     @IntDef(value = {RS_FINISHED, RS_CANCELED, RS_EXCEPTION})
     public @interface EnumResultStatus {
         int RS_FINISHED = 0;
         int RS_CANCELED = 1;
         int RS_EXCEPTION = 2;
+    }
+
+    /**
+     * Error codes owned by this bundle, reported via {@link #getErrorCode()} with
+     * {@link EnumResultStatus#RS_EXCEPTION}. Capture Vision's own codes are all {@code <= 0}, so the
+     * positive 1000-1999 range is reserved here and matches iOS; the sign tells the two apart.
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {EnumErrorCode.EC_CAMERA_PERMISSION_DENIED,
+            EnumErrorCode.EC_CAMERA_PERMISSION_RESTRICTED})
+    public @interface EnumErrorCode {
+        /// Denied but still grantable — by a fresh in-app request, or via Settings once permanent.
+        int EC_CAMERA_PERMISSION_DENIED = 1001;
+
+        /// Withheld by device policy; the user cannot grant it, so Settings would be a dead end.
+        int EC_CAMERA_PERMISSION_RESTRICTED = 1002;
     }
 
     public MRZScanResult() {
@@ -48,11 +73,13 @@ public final class MRZScanResult implements Parcelable {
         errorCode = in.readInt();
         errorString = in.readString();
         mrzData = (MRZData) in.readSerializable();
-        mrzPageOriginalImageInstance = in.readLong();
-        mrzPageDocumentImageInstance = in.readLong();
-        anotherPageOriginalImageInstance = in.readLong();
-        anotherPageDocumentImageInstance = in.readLong();
-        portraitImageInstance = in.readLong();
+        // Read as bare longs in TYPE_* order, matching writeToParcel.
+        for (int type = 0; type < TYPE_COUNT; type++) {
+            imageInstances[type] = in.readLong();
+        }
+
+        // Retain on read, not write: the framework may parcel an Intent more often than it unparcels (issue #64).
+        retainAllImageInstances();
     }
 
     @Override
@@ -61,13 +88,11 @@ public final class MRZScanResult implements Parcelable {
         dest.writeInt(errorCode);
         dest.writeString(errorString);
         dest.writeSerializable(mrzData);
-        dest.writeLong(mrzPageOriginalImageInstance);
-        dest.writeLong(mrzPageDocumentImageInstance);
-        dest.writeLong(anotherPageOriginalImageInstance);
-        dest.writeLong(anotherPageDocumentImageInstance);
-        dest.writeLong(portraitImageInstance);
+        for (long instance : imageInstances) {
+            dest.writeLong(instance);
+        }
 
-        retainAllImageInstances();
+        // No retain here — the unparceled peer takes its own in the Parcel constructor (issue #64).
     }
 
     @Override
@@ -86,7 +111,6 @@ public final class MRZScanResult implements Parcelable {
             return new MRZScanResult[size];
         }
     };
-
 
     public MRZData getData() {
         return mrzData;
@@ -107,128 +131,62 @@ public final class MRZScanResult implements Parcelable {
 
     @Nullable
     public ImageData getDocumentImage(EnumDocumentSide documentSide) {
-        if(documentSide == EnumDocumentSide.DS_MRZ) {
-            return getPrimaryDocumentImage();
-        } else {
-            return getSecondaryDocumentImage();
-        }
+        return imageOfType(documentSide == EnumDocumentSide.DS_MRZ ? TYPE_MRZ_DOCUMENT : TYPE_OTHER_DOCUMENT);
     }
 
     @Nullable
     public ImageData getOriginalImage(EnumDocumentSide documentSide) {
-        if(documentSide == EnumDocumentSide.DS_MRZ) {
-            return getPrimaryOriginalImage();
-        } else {
-            return getSecondaryOriginalImage();
-        }
-    }
-
-    @Nullable
-    private ImageData getPrimaryOriginalImage() {
-        if (mrzPageOriginalImageInstance == 0) {
-            return null;
-        }
-        if (primaryOriginalImage == null) {
-            primaryOriginalImage = nativeGetImageData(mrzPageOriginalImageInstance);
-        }
-        return primaryOriginalImage;
-    }
-
-    @Nullable
-    private ImageData getPrimaryDocumentImage() {
-        if (mrzPageDocumentImageInstance == 0) {
-            return null;
-        }
-        if (primaryDocumentImage == null) {
-            primaryDocumentImage = nativeGetImageData(mrzPageDocumentImageInstance);
-        }
-        return primaryDocumentImage;
-    }
-
-    @Nullable
-    private ImageData getSecondaryOriginalImage() {
-        if (anotherPageOriginalImageInstance == 0) {
-            return null;
-        }
-        if (secondaryOriginalImage == null) {
-            secondaryOriginalImage = nativeGetImageData(anotherPageOriginalImageInstance);
-        }
-        return secondaryOriginalImage;
-    }
-
-    @Nullable
-    private ImageData getSecondaryDocumentImage() {
-        if (anotherPageDocumentImageInstance == 0) {
-            return null;
-        }
-        if (secondaryDocumentImage == null) {
-            secondaryDocumentImage = nativeGetImageData(anotherPageDocumentImageInstance);
-        }
-        return secondaryDocumentImage;
+        return imageOfType(documentSide == EnumDocumentSide.DS_MRZ ? TYPE_MRZ_ORIGINAL : TYPE_OTHER_ORIGINAL);
     }
 
     @Nullable
     public ImageData getPortraitImage() {
-        if (portraitImageInstance == 0) {
-            return null;
-        }
-        if (portraitImage == null) {
-            portraitImage = nativeGetImageData(portraitImageInstance);
-        }
-        return portraitImage;
+        return imageOfType(TYPE_PORTRAIT);
     }
 
+    /// Materializes the image for one slot on first access and caches it.
+    @Nullable
+    private ImageData imageOfType(int type) {
+        if (imageInstances[type] == 0) {
+            return null;
+        }
+        if (cachedImages == null) {
+            cachedImages = new ImageData[TYPE_COUNT];
+        }
+        if (cachedImages[type] == null) {
+            cachedImages[type] = nativeGetImageData(imageInstances[type]);
+        }
+        return cachedImages[type];
+    }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public long _getImageInstance(int type) {
-        switch (type) {
-            case 0:
-                return mrzPageOriginalImageInstance;
-            case 1:
-                return mrzPageDocumentImageInstance;
-            case 2:
-                return anotherPageOriginalImageInstance;
-            case 3:
-                return anotherPageDocumentImageInstance;
-            case 4:
-                return portraitImageInstance;
-            default:
-                return 0;
-        }
+        return type >= 0 && type < TYPE_COUNT ? imageInstances[type] : 0;
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public void retainAllImageInstances() {
-        nativeRetainImageData(mrzPageOriginalImageInstance);
-        nativeRetainImageData(mrzPageDocumentImageInstance);
-        nativeRetainImageData(portraitImageInstance);
-        nativeRetainImageData(anotherPageOriginalImageInstance);
-        nativeRetainImageData(anotherPageDocumentImageInstance);
+        for (long instance : imageInstances) {
+            if (instance != 0) nativeRetainImageData(instance);
+        }
+    }
+
+    /// Drops and forgets every native instance; idempotent, so a later call or finalize() is a no-op.
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public void releaseAllImageInstances() {
+        for (int type = 0; type < TYPE_COUNT; type++) {
+            if (imageInstances[type] != 0) {
+                nativeReleaseImageData(imageInstances[type]);
+                imageInstances[type] = 0;
+            }
+        }
+        cachedImages = null;
     }
 
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        if (mrzPageOriginalImageInstance != 0) {
-            nativeReleaseImageData(mrzPageOriginalImageInstance);
-            mrzPageOriginalImageInstance = 0;
-        }
-        if (mrzPageDocumentImageInstance != 0) {
-            nativeReleaseImageData(mrzPageDocumentImageInstance);
-            mrzPageDocumentImageInstance = 0;
-        }
-        if (portraitImageInstance != 0) {
-            nativeReleaseImageData(portraitImageInstance);
-            portraitImageInstance = 0;
-        }
-        if (anotherPageOriginalImageInstance != 0) {
-            nativeReleaseImageData(anotherPageOriginalImageInstance);
-            anotherPageOriginalImageInstance = 0;
-        }
-        if (anotherPageDocumentImageInstance != 0) {
-            nativeReleaseImageData(anotherPageDocumentImageInstance);
-            anotherPageDocumentImageInstance = 0;
-        }
+        releaseAllImageInstances();
     }
 
     static native ImageData nativeGetImageData(long instance);

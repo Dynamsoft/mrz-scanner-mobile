@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="guide_frame_text"><![CDATA[ABC123<<<<<<<<<<<<<<<<<<<<<\nABC123<<<<<<<<<<<<<<<<<<<<<]]></string>
-
     <string name="tip1"><font color="#FFFFFF">Scan the MRZ side first</font></string>
     <string name="tip2">MRZ scanned ✓\nPortrait scanned ✓</string>
     <string name="tip2_1">MRZ scanned ✓\n
@@ -27,4 +25,13 @@
     <string name="tip5">MRZ scanned ✓\n
         <font color="#FFFFFF">No portrait detected</font>
     </string>
+
+    <string name="spinner_content_description">Scanning in progress</string>
+
+    <string name="camera_permission_title">Camera Access Needed</string>
+    <string name="camera_permission_allow">Allow camera access</string>
+    <string name="camera_permission_settings">Open Settings</string>
+    <string name="camera_permission_required">Camera access is required to scan an MRZ.</string>
+    <string name="camera_permission_denied">Camera access is denied. Enable camera access for this app in Settings to scan.</string>
+    <string name="camera_permission_restricted">Camera access is restricted on this device and cannot be granted by the user.</string>
 </resources>

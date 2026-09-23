@@ -92,7 +92,7 @@ enum BarcodeFormat : unsigned long long
 	/**GS1 Databar Expanded*/
 	BF_GS1_DATABAR_EXPANDED = 0x8000,
 
-	/**GS1 Databar Expaned Stacked*/
+	/**GS1 Databar Expanded Stacked*/
 	BF_GS1_DATABAR_EXPANDED_STACKED = 0x10000,
 
 	/**GS1 Databar Limited*/
@@ -409,7 +409,7 @@ namespace dynamsoft
 		 * The `CBarcodeDetails` class represents the details of a barcode. It is an abstract base class.
 		 *
 		 */
-		class DBR_API CBarcodeDetails 
+		class DBR_API CBarcodeDetails
 		{
 		public:
 			/**
@@ -421,7 +421,7 @@ namespace dynamsoft
 		/**
 		 * The `COneDCodeDetails` class represents detailed information about a one-dimensional barcode. It inherits from the `CBarcodeDetails` class.
 		 */
-		class DBR_API COneDCodeDetails :public CBarcodeDetails 
+		class DBR_API COneDCodeDetails :public CBarcodeDetails
 		{
 		public:
 			/**
@@ -483,7 +483,7 @@ namespace dynamsoft
 		 * The `CQRCodeDetails` class represents the details of a QR Code barcode. It is derived from the `CBarcodeDetails` class and contains various attributes related to the QR Code barcode.
 		 *
 		 */
-		class DBR_API CQRCodeDetails : public CBarcodeDetails 
+		class DBR_API CQRCodeDetails : public CBarcodeDetails
 		{
 		public:
 			CQRCodeDetails(int _rows = -1, int _columns = -1, QRCodeErrorCorrectionLevel _level = QRECL_ERROR_CORRECTION_H,
@@ -536,7 +536,7 @@ namespace dynamsoft
 		 * The `CPDF417Details` class represents a barcode in PDF417 format. It inherits from the `CBarcodeDetails` class and contains information about the row count, column count, and error correction level of the barcode.
 		 *
 		 */
-		class DBR_API CPDF417Details :public CBarcodeDetails 
+		class DBR_API CPDF417Details :public CBarcodeDetails
 		{
 		public:
 			CPDF417Details(int _rows = -1, int _columns = -1, int _level = -1,
@@ -573,7 +573,7 @@ namespace dynamsoft
 		 * The `CDataMatrixDetails` class represents the details of a DataMatrix barcode. It is derived from the `CBarcodeDetails` class and contains various attributes related to the DataMatrix barcode.
 		 *
 		 */
-		class DBR_API CDataMatrixDetails : public CBarcodeDetails 
+		class DBR_API CDataMatrixDetails : public CBarcodeDetails
 		{
 		public:
 			CDataMatrixDetails(int _rows = -1, int _columns = -1, int _dataRegionRows = -1,
@@ -599,7 +599,7 @@ namespace dynamsoft
 		 * The `CAztecDetails` class represents a barcode in Aztec format. It inherits from the `CBarcodeDetails` class and contains information about the row count, column count, and layer number of the barcode.
 		 *
 		 */
-		class DBR_API CAztecDetails :public CBarcodeDetails 
+		class DBR_API CAztecDetails :public CBarcodeDetails
 		{
 		public:
 			CAztecDetails(int _rows = -1, int _columns = -1, int _layerNumber = -1);
@@ -714,6 +714,10 @@ namespace dynamsoft
 				 * @return Returns 0 if success, otherwise an error code.
 				 */
 				virtual int SetLocation(const CQuadrilateral& location) = 0;
+
+				virtual void MarkAsDecoded() = 0;
+
+				virtual bool IsDecoded() const = 0;
 			};
 
 			class DBR_API CExtendedBarcodeResult;
@@ -1139,6 +1143,10 @@ namespace dynamsoft
 				 * @return Returns 0 if successful, otherwise returns a negative value.
 				 */
 				virtual int SetLocalizedBarcode(int index, const CLocalizedBarcodeElement* element, const double matrixToOriginalImage[9] = IDENTITY_MATRIX) = 0;
+				
+				virtual CLocalizedBarcodeElement* GetLocalizedBarcode(int index) = 0;
+
+				virtual CLocalizedBarcodeElement* operator[](int index) = 0;
 			};
 
 			/**

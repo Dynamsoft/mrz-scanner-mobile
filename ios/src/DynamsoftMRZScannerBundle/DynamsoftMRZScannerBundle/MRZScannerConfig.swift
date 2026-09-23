@@ -32,11 +32,15 @@ public class MRZScannerConfig: NSObject {
     public var returnPortraitImage: Bool = true
     public var returnOriginalImage: Bool = false
     public var isFormatSelectorVisible: Bool = true
-    
+    /// When `true` (the default) a denied camera presents an alert offering to open Settings
+    /// before reporting; `false` reports through `onScannedResult` alone. Either way the
+    /// denial arrives as ``ErrorCode/cameraPermissionDenied`` and the camera never starts.
+    public var isCameraPermissionPromptEnabled: Bool = true
+
     override public init() {
         super.init()
     }
-    
+
     public init(license: String) {
         self.license = license
         super.init()

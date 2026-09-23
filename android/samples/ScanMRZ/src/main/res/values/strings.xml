@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ScanMRZ</string>
+    <string name="scan_an_mrz">Scan an MRZ</string>
+    <string name="re_scan">Re-scan</string>
+    <string name="return_home">Return home</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="scan_no_data">Scan returned no data</string>
+</resources>

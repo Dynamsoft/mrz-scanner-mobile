@@ -336,7 +336,18 @@
             "SectionArray": [
                 {
                     "Section": "ST_DOCUMENT_DETECTION",
-                    "ImageParameterName": "ip-detect-and-normalize"
+                    "ImageParameterName": "ip-detect-and-normalize",
+                    "StageArray": [
+                        {
+                            "Stage": "SST_DETECT_QUADS",
+                            "QuadrilateralDetectionModes": [
+                                {
+                                    "Mode": "QDM_GENERAL",
+                                    "MinQuadrilateralAreaRatio": 2
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "Section": "ST_DOCUMENT_DESKEWING",

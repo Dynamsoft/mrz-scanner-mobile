@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.MRZScanner">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            Not exported: MainActivity starts this with an explicit Intent, and the scan
+            result it carries should not be settable by another app on the device.
+        -->
+        <activity
+            android:name=".ResultActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <!--
+            MRZScannerActivity defaults to portrait. To change that, redeclare it here and
+            override android:screenOrientation — tools:replace is what lets the merge through.
+        -->
+        <!--
+        <activity
+            android:name="com.dynamsoft.mrzscannerbundle.ui.MRZScannerActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="android:screenOrientation"/>
+        -->
+    </application>
+
+</manifest>

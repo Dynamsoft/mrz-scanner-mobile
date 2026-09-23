@@ -124,6 +124,10 @@ public:
 	bool IsNeedZoom(int original_w, int original_h);
 	bool IsNeedFilter(bool isFocusing);
 
+
+	int GetStableFrameCount(int stableThreshold, float wr, float hr, int grayThreashold);
+	void ClearStatus();
+
 	int Upload(int _time);
 	int IsValidLicense();
 	//int IsValidLocalLicense();
@@ -161,6 +165,10 @@ private:
 
 
 private:
+
+	int m_staleFrames{ 0 };
+	int m_firstClarityEx{ 0 };
+	int m_lastClarityEx{ 0 };
 
 	int left, right, top, bottom;
 	int left2, right2, top2, bottom2;

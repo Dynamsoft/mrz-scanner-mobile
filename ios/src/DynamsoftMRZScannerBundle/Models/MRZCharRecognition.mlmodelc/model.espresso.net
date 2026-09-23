@@ -1,0 +1,278 @@
+{
+  "storage" : "model.espresso.weights",
+  "analyses" : {
+
+  },
+  "properties" : {
+
+  },
+  "format_version" : 200,
+  "metadata_in_weights" : [
+
+  ],
+  "layers" : [
+    {
+      "pad_r" : 0,
+      "fused_relu" : 0,
+      "fused_tanh" : 0,
+      "debug_info" : "\/conv1\/Conv",
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "\/conv1\/Conv_output_0",
+      "blob_weights" : 3,
+      "K" : 1,
+      "blob_biases" : 1,
+      "name" : "\/conv1\/Conv",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 10,
+      "bottom" : "input",
+      "weights" : {
+
+      },
+      "Nx" : 5,
+      "pad_mode" : 0,
+      "pad_value" : 0,
+      "Ny" : 5,
+      "n_parallel" : 1
+    },
+    {
+      "pad_r" : 0,
+      "debug_info" : "\/MaxPool",
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "size_x" : 2,
+      "top" : "\/MaxPool_output_0",
+      "top_shape_style" : 0,
+      "stride_x" : 2,
+      "avg_or_max" : 1,
+      "average_count_exclude_padding" : 1,
+      "type" : "pool",
+      "name" : "\/MaxPool",
+      "pad_t" : 0,
+      "stride_y" : 2,
+      "bottom" : "\/conv1\/Conv_output_0",
+      "weights" : {
+
+      },
+      "pad_mode" : 2,
+      "size_y" : 2,
+      "pad_value" : 0
+    },
+    {
+      "bottom" : "\/MaxPool_output_0",
+      "weights" : {
+
+      },
+      "mode" : 0,
+      "debug_info" : "\/Relu",
+      "top" : "\/Relu_output_0",
+      "type" : "activation",
+      "name" : "\/Relu"
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 0,
+      "fused_tanh" : 0,
+      "debug_info" : "\/conv2\/Conv",
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "\/conv2\/Conv_output_0",
+      "blob_weights" : 7,
+      "K" : 10,
+      "blob_biases" : 5,
+      "name" : "\/conv2\/Conv",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 20,
+      "bottom" : "\/Relu_output_0",
+      "weights" : {
+
+      },
+      "Nx" : 5,
+      "pad_mode" : 0,
+      "pad_value" : 0,
+      "Ny" : 5,
+      "n_parallel" : 1
+    },
+    {
+      "pad_r" : 0,
+      "debug_info" : "\/MaxPool_1",
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "size_x" : 2,
+      "top" : "\/MaxPool_1_output_0",
+      "top_shape_style" : 0,
+      "stride_x" : 2,
+      "avg_or_max" : 1,
+      "average_count_exclude_padding" : 1,
+      "type" : "pool",
+      "name" : "\/MaxPool_1",
+      "pad_t" : 0,
+      "stride_y" : 2,
+      "bottom" : "\/conv2\/Conv_output_0",
+      "weights" : {
+
+      },
+      "pad_mode" : 2,
+      "size_y" : 2,
+      "pad_value" : 0
+    },
+    {
+      "bottom" : "\/MaxPool_1_output_0",
+      "weights" : {
+
+      },
+      "mode" : 0,
+      "debug_info" : "\/Relu_1",
+      "top" : "\/Relu_1_output_0",
+      "type" : "activation",
+      "name" : "\/Relu_1"
+    },
+    {
+      "name" : "\/Reshape",
+      "weights" : {
+
+      },
+      "dst_w" : 500,
+      "version" : 1,
+      "dst_n" : 1,
+      "dst_nd_rank" : 2,
+      "type" : "reshape",
+      "dst_h" : -1,
+      "mode" : 0,
+      "dynamic_shape" : false,
+      "bottom" : "\/Relu_1_output_0",
+      "debug_info" : "\/Reshape",
+      "dst_seq" : 1,
+      "dst_k" : 1,
+      "top" : "\/Reshape_output_0"
+    },
+    {
+      "nB" : 500,
+      "top" : "\/Relu_2_output_0",
+      "has_biases" : 1,
+      "blob_biases" : 9,
+      "nC" : 64,
+      "blob_weights" : 11,
+      "weights" : {
+
+      },
+      "type" : "inner_product",
+      "has_relu" : 1,
+      "bottom" : "\/Reshape_output_0",
+      "debug_info" : "\/fc1\/Gemm",
+      "has_tanh" : 0,
+      "nd_mode" : true,
+      "name" : "\/fc1\/Gemm",
+      "has_prelu" : 0
+    },
+    {
+      "has_prelu" : 0,
+      "top" : "\/fc2\/Gemm_output_0",
+      "has_biases" : 1,
+      "blob_biases" : 13,
+      "nC" : 37,
+      "blob_weights" : 15,
+      "weights" : {
+
+      },
+      "type" : "inner_product",
+      "has_relu" : 0,
+      "attributes" : {
+        "is_output" : 1
+      },
+      "bottom" : "\/Relu_2_output_0",
+      "debug_info" : "\/fc2\/Gemm",
+      "has_tanh" : 0,
+      "nd_mode" : true,
+      "name" : "\/fc2\/Gemm",
+      "nB" : 64
+    },
+    {
+      "size_of_axes" : 3,
+      "bottom" : "\/fc2\/Gemm_output_0",
+      "axes_0" : 0,
+      "axes_1" : 1,
+      "axes_2" : 2,
+      "nd_axis" : 0,
+      "weights" : {
+
+      },
+      "debug_info" : "Softmax_expand_dims",
+      "top" : "Softmax_\/fc2\/Gemm_output_0_expanded",
+      "type" : "expand_dims",
+      "name" : "Softmax_expand_dims"
+    },
+    {
+      "axis_h" : 1,
+      "axis_w" : 2,
+      "bottom" : "Softmax_\/fc2\/Gemm_output_0_expanded",
+      "axis_k" : 0,
+      "axis_n" : 3,
+      "axis_seq" : 4,
+      "weights" : {
+
+      },
+      "debug_info" : "Softmax_transpose",
+      "top" : "Softmax_\/fc2\/Gemm_output_0_expanded_transposed",
+      "type" : "transpose",
+      "name" : "Softmax_transpose"
+    },
+    {
+      "bottom" : "Softmax_\/fc2\/Gemm_output_0_expanded_transposed",
+      "weights" : {
+
+      },
+      "debug_info" : "Softmax",
+      "top" : "output_expanded_transposed",
+      "C" : 2,
+      "type" : "softmax",
+      "name" : "Softmax"
+    },
+    {
+      "axis_h" : 1,
+      "axis_w" : 2,
+      "bottom" : "output_expanded_transposed",
+      "axis_k" : 0,
+      "axis_n" : 3,
+      "axis_seq" : 4,
+      "weights" : {
+
+      },
+      "debug_info" : "Softmax_transpose_back",
+      "top" : "output_expanded_transposed_transposed_back",
+      "type" : "transpose",
+      "name" : "Softmax_transpose_back"
+    },
+    {
+      "weights" : {
+
+      },
+      "version" : 1,
+      "axes_2" : 2,
+      "axes_1" : 1,
+      "type" : "squeeze",
+      "axes_0" : 0,
+      "attributes" : {
+        "is_output" : 1
+      },
+      "nd_axis" : 0,
+      "bottom" : "output_expanded_transposed_transposed_back",
+      "debug_info" : "Softmax_squeeze_dims",
+      "size_of_axes" : 3,
+      "name" : "Softmax_squeeze_dims",
+      "top" : "output"
+    }
+  ]
+}
